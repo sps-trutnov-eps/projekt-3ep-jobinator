@@ -1,32 +1,24 @@
-namespace Jobinator
+using Microsoft.EntityFrameworkCore;
+using Jobinator.Data;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+        // Add services to the container.
+        // Ensure you add DbContext and use the connection string from appsettings.json
+        builder.Services.AddDbContext<DataContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("MyDatabase")));
 
-            var app = builder.Build();
+        builder.Services.AddControllersWithViews();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-            app.UseStaticFiles();
+        var app = builder.Build();
 
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-
-            app.Run();
-        }
+        // Configure the HTTP request pipeline, middleware, etc.
+        app.UseRouting();
+        app.MapDefaultControllerRoute();
+        app.Run();
     }
 }
