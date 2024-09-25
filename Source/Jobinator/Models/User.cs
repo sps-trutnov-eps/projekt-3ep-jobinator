@@ -9,12 +9,21 @@ namespace Jobinator.Models
         public int Id { get; set; }
 
         [Required]
-        public string? Jmeno { get; set; }
+        [MaxLength(100)]
+        public string Username { get; set; }
+       
         [Required]
-        public string? Heslo { get; set; }
-        [AllowNull]
-        public string? RequestId { get; set; }
-        [AllowNull]
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        [MaxLength(100)]
+        public string Name { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string Surname { get; set; }
+
+        [Required]
+        [MaxLength(256)]
+        public string PasswordHash { get; set; }
+
+        public ICollection<Post>? Posts { get; set; }
     }
 }
