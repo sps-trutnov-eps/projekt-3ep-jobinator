@@ -26,14 +26,11 @@ namespace Jobinator.Controllers
         {
             return View();
         }
-<<<<<<< HEAD
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new User { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-=======
->>>>>>> 2167cb51bb6461732c6ca2c03f51de3c6b349506
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error()
+        //{
+        //    return View(new User { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
     }
 }
