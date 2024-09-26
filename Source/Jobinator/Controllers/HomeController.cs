@@ -18,9 +18,19 @@ namespace Jobinator.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Offer()
         {
             return View();
         }
+        public IActionResult Demand()
+        {
+            return View();
+        }
+
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error()
+        //{
+        //    return View(new User { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
     }
 }
