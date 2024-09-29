@@ -18,6 +18,8 @@ public class Program
 
         builder.Services.AddControllersWithViews();
 
+        builder.Services.AddSession();
+
         var app = builder.Build();
 
         // Code to test the database in early stages of development
@@ -25,6 +27,7 @@ public class Program
         // Configure the HTTP request pipeline, middleware, etc.
         app.UseRouting();
         app.MapDefaultControllerRoute();
+        app.UseSession();
         app.Run();
     }
     private static void TestDB(WebApplication app)
