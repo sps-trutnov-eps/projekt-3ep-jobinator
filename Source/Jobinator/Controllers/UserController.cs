@@ -103,7 +103,7 @@ namespace Jobinator.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [HttpGet] 
+        [HttpGet]
         public IActionResult DeleteAccount()
         {
             return View();
@@ -131,6 +131,7 @@ namespace Jobinator.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-     
+
+
     }
 }
