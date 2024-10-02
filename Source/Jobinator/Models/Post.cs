@@ -15,6 +15,12 @@ namespace Jobinator.Models
             Finance,
         }
 
+        public enum PostType
+        {
+            Offer,
+            Demand
+        }
+
 
         [Key]
         public int Id { get; set; }
@@ -29,6 +35,9 @@ namespace Jobinator.Models
 
         [Required]
         public string Content { get; set; }
+
+        [Required]
+        public PostType Type { get; set; }
 
         [ForeignKey("User")]
         public int UserId { get; set; }

@@ -41,7 +41,7 @@ public class Program
             context.SaveChanges();
 
             // Add a new post
-            var post = new Post { Category = Post.JobCategory.IT , Title = "My First Post", Content = "Hello World!", UserId = user.Id };
+            var post = new Post {Type = Post.PostType.Offer, Category = Post.JobCategory.IT, Title = "My First Post", Content = "Hello World!", UserId = user.Id };
             context.Posts.Add(post);
             context.SaveChanges();
 
