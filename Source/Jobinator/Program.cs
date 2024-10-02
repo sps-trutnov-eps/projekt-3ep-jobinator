@@ -21,7 +21,7 @@ public class Program
         var app = builder.Build();
 
         // Code to test the database in early stages of development
-        TestDB(app);
+        //TestDB(app);
         // Configure the HTTP request pipeline, middleware, etc.
         app.UseRouting();
         app.MapDefaultControllerRoute();
