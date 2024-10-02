@@ -21,7 +21,7 @@ public class Program
         var app = builder.Build();
 
         // Code to test the database in early stages of development
-        //TestDB(app);
+        TestDB(app);
         // Configure the HTTP request pipeline, middleware, etc.
         app.UseRouting();
         app.MapDefaultControllerRoute();
@@ -41,7 +41,7 @@ public class Program
             context.SaveChanges();
 
             // Add a new post
-            var post = new Post { Category = Post.JobCategory.IT , Title = "My First Post", Content = "Hello World!", UserId = user.Id };
+            var post = new Post {Type = Post.PostType.Offer, Category = Post.JobCategory.IT, Title = "My First Post", Content = "Hello World!", UserId = user.Id };
             context.Posts.Add(post);
             context.SaveChanges();
 
