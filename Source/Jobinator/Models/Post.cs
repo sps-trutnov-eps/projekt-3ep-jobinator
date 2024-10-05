@@ -5,12 +5,29 @@ namespace Jobinator.Models
 {
     public class Post
     {
+        // enum type for post categories
+        public enum JobCategory
+        {
+            IT,
+            Logistics,
+            Construction,
+            Healthcare,
+            Finance,
+        }
+
+        public enum PostType
+        {
+            Offer,
+            Demand
+        }
+
+
         [Key]
         public int Id { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string Type { get; set; } // Later could be changed to EnumDataType
+        public JobCategory Category { get; set; } // Later could be changed to EnumDataType
 
         [Required]
         [MaxLength(200)]
@@ -18,6 +35,9 @@ namespace Jobinator.Models
 
         [Required]
         public string Content { get; set; }
+
+        [Required]
+        public PostType Type { get; set; }
 
         [ForeignKey("User")]
         public int UserId { get; set; }

@@ -1,7 +1,5 @@
-﻿using Azure.Core;
 using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Jobinator.Data;
 
 
@@ -131,7 +129,6 @@ namespace Jobinator.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
-
+        
     }
 }

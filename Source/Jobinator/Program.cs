@@ -30,6 +30,8 @@ public class Program
         app.UseSession();
         app.Run();
     }
+
+    // Simple function that tests the basics of our database, serves also as an example 
     private static void TestDB(WebApplication app)
     {
         using (var scope = app.Services.CreateScope())
@@ -42,7 +44,7 @@ public class Program
             context.SaveChanges();
 
             // Add a new post
-            var post = new Post { Type = "Blog", Title = "My First Post", Content = "Hello World!", UserId = user.Id };
+            var post = new Post {Type = Post.PostType.Offer, Category = Post.JobCategory.IT, Title = "My First Post", Content = "Hello World!", UserId = user.Id };
             context.Posts.Add(post);
             context.SaveChanges();
 
