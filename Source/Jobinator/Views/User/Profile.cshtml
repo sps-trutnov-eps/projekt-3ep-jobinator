@@ -1,7 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Your Profile";
+﻿@model Jobinator.Models.User;
+
+@{
+    ViewData["Title"] = "Profile";
 }
 
-<div class="text-center">
-    <h1>Your Profile</h1>
-</div>
+<p>@Model.Username</p>

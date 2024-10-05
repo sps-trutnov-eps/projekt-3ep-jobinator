@@ -17,6 +17,8 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("JobinatorDatabase")));
 
         builder.Services.AddControllersWithViews();
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddSession();
 
         var app = builder.Build();
 
@@ -25,6 +27,7 @@ public class Program
         // Configure the HTTP request pipeline, middleware, etc.
         app.UseRouting();
         app.MapDefaultControllerRoute();
+        app.UseSession();
         app.Run();
     }
 
