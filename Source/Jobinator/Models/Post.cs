@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Jobinator.Models;
 
 namespace Jobinator.Models
 {
@@ -10,7 +11,7 @@ namespace Jobinator.Models
 
         [Required]
         [MaxLength(50)]
-        public string Type { get; set; } // Later could be changed to EnumDataType
+        public PostType Type { get; set; }
 
         [Required]
         [MaxLength(200)]
@@ -23,5 +24,9 @@ namespace Jobinator.Models
         public int UserId { get; set; }
 
         public User User { get; set; }
+
+        public enum PostType { Offer, Request }
+        public enum JobCategory { IT, Marketing, Finance }
+        public JobCategory Category { get; set; }
     }
 }
