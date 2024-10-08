@@ -1,8 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<!-- Button to open the popup -->
-<button id="openPopupBtn" class="open-popup-btn">Create Post</button>
 
 <!-- The Popup form -->
 <div id="popupForm" class="popup-form">
@@ -15,6 +13,21 @@
 
             <label for="postContent">Content:</label>
             <textarea id="postContent" name="content" rows="5" required></textarea>
+
+            <!-- Post Type Dropdown -->
+            <label for="postType">Type of Post:</label>
+            <select id="postType" name="postType" required>
+                <option value="Offer">Offer</option>
+                <option value="Request">Request</option>
+            </select>
+
+            <!-- Category Dropdown -->
+            <label for="postCategory">Category:</label>
+            <select id="postCategory" name="category" required>
+                <option value="IT">IT</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Finance">Finance</option>
+            </select>
 
             <button type="submit">Submit</button>
         </form>
