@@ -2,37 +2,53 @@
     ViewData["Title"] = "Home Page";
 }
 
-<!-- Button to open the popup form -->
-<button id="openPopupBtn" class="open-popup-btn">Create Post</button>
+<!-- Button to trigger the modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#popupFormModal">
+    Create
+</button>
 
-<!-- The Popup form -->
-<div id="popupForm" class="popup-form">
-    <div class="popup-content">
-        <span id="closePopupBtn" class="close-popup-btn">&times;</span>
-        <h2>Create a Post</h2>
-        <form id="postForm">
-            <label for="postTitle">Title:</label>
-            <input type="text" id="postTitle" name="title" required>
-
-            <label for="postContent">Content:</label>
-            <textarea id="postContent" name="content" rows="5" required></textarea>
-
-            <!-- Post Type Dropdown -->
-            <label for="postType">Type of Post:</label>
-            <select id="postType" name="postType" required>
-                <option value="Offer">Offer</option>
-                <option value="Request">Request</option>
-            </select>
-
-            <!-- Category Dropdown -->
-            <label for="postCategory">Category:</label>
-            <select id="postCategory" name="category" required>
-                <option value="IT">IT</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Finance">Finance</option>
-            </select>
-
-            <button type="submit">Submit</button>
-        </form>
+<!-- Modal Structure -->
+<div class="modal fade" id="popupFormModal" tabindex="-1" aria-labelledby="popupFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="popupFormModalLabel">Create a New Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form Starts Here -->
+                <form id="popupForm" asp-action="SubmitForm" method="post">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="Title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Content</label>
+                        <textarea class="form-control" id="content" name="Content" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="offerRequest" class="form-label">Select Offer/Request</label>
+                        <select class="form-select" id="offerRequest" name="OfferRequest" required>
+                            <option selected disabled value="">Choose...</option>
+                            <option value="Offer">Offer</option>
+                            <option value="Request">Request</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Select category</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option selected disabled value="">Choose...</option>
+                            <option value="IT">IT</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Finance">Finance</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="popupForm" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
     </div>
 </div>

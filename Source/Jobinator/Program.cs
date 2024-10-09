@@ -35,29 +35,29 @@ public class Program
     {
         using (var scope = app.Services.CreateScope())
         {
-            var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+            //var context = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-            // Add a new user
-            var user = new User {Username = "username2", Name = "John", Surname = "Doe", PasswordHash = "passwordHash" };
-            context.Users.Add(user);
-            context.SaveChanges();
+            //// Add a new user
+            //var user = new User {Username = "username2", Name = "John", Surname = "Doe", PasswordHash = "passwordHash" };
+            //context.Users.Add(user);
+            //context.SaveChanges();
 
-            // Add a new post
-            var post = new Post { Type = "Blog", Title = "My First Post", Content = "Hello World!", UserId = user.Id };
-            context.Posts.Add(post);
-            context.SaveChanges();
+            //// Add a new post
+            //var post = new Post { Type = "Blog", Title = "My First Post", Content = "Hello World!", UserId = user.Id };
+            //context.Posts.Add(post);
+            //context.SaveChanges();
 
-            // Retrieve and display the post
-            var RetrievedPost = context.Posts.Include(p => p.User).FirstOrDefault(p => p.Id == post.Id);
-            Debug.WriteLine($"Post Title: {RetrievedPost.Title}, Author: {RetrievedPost.User.Name}");
-            var UserWithPosts = context.Users
-                               .Include(u => u.Posts)
-                               .FirstOrDefault(u => u.Id == RetrievedPost.User.Id);
-            //Print out list of all posts
-            foreach (var UserPost in UserWithPosts.Posts)
-            {
-                Debug.WriteLine($"Post: {post.Title}");
-            }
+            //// Retrieve and display the post
+            //var RetrievedPost = context.Posts.Include(p => p.User).FirstOrDefault(p => p.Id == post.Id);
+            //Debug.WriteLine($"Post Title: {RetrievedPost.Title}, Author: {RetrievedPost.User.Name}");
+            //var UserWithPosts = context.Users
+            //                   .Include(u => u.Posts)
+            //                   .FirstOrDefault(u => u.Id == RetrievedPost.User.Id);
+            ////Print out list of all posts
+            //foreach (var UserPost in UserWithPosts.Posts)
+            //{
+            //    Debug.WriteLine($"Post: {post.Title}");
+            //}
 
         }
     }
