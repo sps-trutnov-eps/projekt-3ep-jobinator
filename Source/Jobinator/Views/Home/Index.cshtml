@@ -30,19 +30,23 @@
                         <label for="offerRequest" class="form-label">Select Offer/Request</label>
                         <select class="form-select" id="offerRequest" name="OfferRequest" required>
                             <option selected disabled value="">Choose...</option>
-                            <option value="Offer">Offer</option>
-                            <option value="Request">Request</option>
+                            @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.OfferRequest)))
+                            {
+                                <option value="@((int)item)">@item</option>
+                            }
                         </select>
                     </div>
+
                     <div class="mb-3">
-                        <label for="category" class="form-label">Select category</label>
-                        <select class="form-select" id="category" name="category" required>
+                        <label for="category" class="form-label">Select Category</label>
+                        <select class="form-select" id="category" name="JobCategory" required>
                             <option selected disabled value="">Choose...</option>
-                            <option value="IT">IT</option>
-                            <option value="Marketing">Marketing</option>
-                            <option value="Finance">Finance</option>
+                            @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.JobCategory)))
+                            {
+                                <option value="@((int)item)">@item</option>
+                            }
                         </select>
-                    </div>
+                    </div>>
                 </form>
             </div>
             <div class="modal-footer">

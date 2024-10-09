@@ -10,23 +10,33 @@ namespace Jobinator.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        public PostType Type { get; set; }
-
-        [Required]
         [MaxLength(200)]
-        public string Title { get; set; } 
+        public string Title { get; set; }
 
         [Required]
         public string Content { get; set; }
 
-        [ForeignKey("User")]
-        public int UserId { get; set; }
+        [Required]
+        public OfferRequest TypOfferRequest { get; set; }
 
-        public User User { get; set; }
-
-        public enum PostType { Offer, Request }
-        public enum JobCategory { IT, Marketing, Finance }
         public JobCategory Category { get; set; }
+
+        //[ForeignKey("User")]
+        //public int UserId { get; set; }
+
+        //public User User { get; set; }
+
+        public enum OfferRequest
+        {
+            Offer = 1,
+            Request = 2
+        }
+
+        public enum JobCategory
+        {
+            IT = 1,
+            Marketing = 2,
+            Finance = 3
+        }
     }
 }
