@@ -31,7 +31,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="offerRequest" class="form-label">Select Offer/Request</label>
-                        <select class="form-select" id="offerRequest" name="OfferRequest" required>
+                        <select class="form-select" id="offerRequest" name="Type" required>
                             <option selected disabled value="">Choose...</option>
                             @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.PostType)))
                             {
@@ -42,7 +42,7 @@
 
                     <div class="mb-3">
                         <label for="category" class="form-label">Select Category</label>
-                        <select class="form-select" id="category" name="JobCategory" required>
+                        <select class="form-select" id="category" name="Category" required>
                             <option selected disabled value="">Choose...</option>
                             @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.JobCategory)))
                             {
