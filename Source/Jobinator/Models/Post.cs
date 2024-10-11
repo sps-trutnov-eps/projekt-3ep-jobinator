@@ -27,7 +27,7 @@ namespace Jobinator.Models
 
         [Required]
         [MaxLength(50)]
-        public JobCategory Category { get; set; } // Later could be changed to EnumDataType
+        public JobCategory Category { get; set; }
 
         [Required]
         [MaxLength(200)]

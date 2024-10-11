@@ -33,7 +33,7 @@
                         <label for="offerRequest" class="form-label">Select Offer/Request</label>
                         <select class="form-select" id="offerRequest" name="OfferRequest" required>
                             <option selected disabled value="">Choose...</option>
-                            @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.OfferRequest)))
+                            @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.PostType)))
                             {
                                 <option value="@((int)item)">@item</option>
                             }
@@ -49,7 +49,7 @@
                                 <option value="@((int)item)">@item</option>
                             }
                         </select>
-                    </div>>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
