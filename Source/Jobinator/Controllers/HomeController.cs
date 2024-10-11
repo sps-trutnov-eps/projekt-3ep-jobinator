@@ -20,31 +20,19 @@ namespace Jobinator.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Offer()
+        {
+            return View();
+        }
+        public IActionResult Demand()
         {
             return View();
         }
 
-        [HttpPost]
-        public IActionResult SubmitForm(string title, string content, OfferRequest offerRequest, JobCategory category)
-        {
-            var post = new Post
-            {
-                Title = title,
-                Content = content,
-                OfferRequest = offerRequest,
-                JobCategory = category
-            };
-
-            // Add the new entry to the database
-            _context.Entries.Add(post);
-            _context.SaveChanges();
-
-            // Use TempData to display a success message
-            TempData["Message"] = $"Title: {title}, Content: {content}, Offer/Request: {offerRequest}, Category: {category}";
-
-            // Refresh page after submission
-            return RedirectToAction("Index");
-        }
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error()
+        //{
+        //    return View(new User { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
     }
 }
