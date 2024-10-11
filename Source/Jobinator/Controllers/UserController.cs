@@ -1,6 +1,7 @@
 using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Jobinator.Data;
+using Jobinator.Helpers;
 
 
 namespace Jobinator.Controllers
@@ -82,14 +83,11 @@ namespace Jobinator.Controllers
         public IActionResult Profile()
         {
 
-            //checks if the user is logged in
-            string? LoggedIn = HttpContext.Session.GetString("LoggedIn");
-            if (LoggedIn == null) return RedirectToAction("Login");
+            AuthHelper authHelper = new();
 
-            User? LoggedUser = _Data.Users
-                .Where(u => u.Username == LoggedIn)
-                .FirstOrDefault();
-            if (User == null) return RedirectToAction("Login");
+            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+
+            if (LoggedUser == null) return RedirectToAction("Login");
 
             return View(LoggedUser);
         }
@@ -111,13 +109,9 @@ namespace Jobinator.Controllers
         [HttpPost]
         public IActionResult DeleteAccount(string Password)
         {
-            string? LoggedIn = HttpContext.Session.GetString("LoggedIn");
+            AuthHelper authHelper = new();
 
-            if (LoggedIn == null) return RedirectToAction("Index", "Home");
-
-            User? LoggedUser = _Data.Users
-                .Where(u => u.Username == LoggedIn)
-                .FirstOrDefault();
+            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
 
             if (LoggedUser == null) return RedirectToAction("Index", "Home");
 
