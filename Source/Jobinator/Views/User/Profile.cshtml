@@ -20,7 +20,7 @@
             </div>
             <div class="modal-body">
                 <!-- Form Starts Here -->
-                <form id="popupForm" asp-action="SubmitForm" method="post">
+                <form id="popupForm" asp-controller="Post" asp-action="Create" method="post">
                     <div class="mb-3">
                         <label for="title" class="form-label">Title</label>
                         <input type="text" class="form-control" id="title" name="Title" required>
