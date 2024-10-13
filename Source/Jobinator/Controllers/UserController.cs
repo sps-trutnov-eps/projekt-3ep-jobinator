@@ -89,6 +89,12 @@ namespace Jobinator.Controllers
 
             if (LoggedUser == null) return RedirectToAction("Login");
 
+
+            // Query all posts from the database
+            _Data.Entry(LoggedUser)
+            .Collection(u => u.Posts)
+            .Load();
+
             return View(LoggedUser);
         }
 
