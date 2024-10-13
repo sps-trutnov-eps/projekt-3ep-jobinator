@@ -28,6 +28,7 @@ public class Program
         app.UseRouting();
         app.MapDefaultControllerRoute();
         app.UseSession();
+        app.UseStaticFiles();
         app.Run();
     }
 

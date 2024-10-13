@@ -1,6 +1,8 @@
 using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using static Jobinator.Models.Post;
 
 namespace Jobinator.Controllers
 {

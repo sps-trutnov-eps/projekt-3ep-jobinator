@@ -5,3 +5,57 @@
 }
 
 <p>@Model.Username</p>
+<!-- Button to trigger the modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#popupFormModal">
+    Create
+</button>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="popupFormModal" tabindex="-1" aria-labelledby="popupFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="popupFormModalLabel">Create a New Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form Starts Here -->
+                <form id="popupForm" asp-controller="Post" asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="Title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Content</label>
+                        <textarea class="form-control" id="content" name="Content" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="offerRequest" class="form-label">Select Offer/Request</label>
+                        <select class="form-select" id="offerRequest" name="Type" required>
+                            <option selected disabled value="">Choose...</option>
+                            @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.PostType)))
+                            {
+                                <option value="@((int)item)">@item</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Select Category</label>
+                        <select class="form-select" id="category" name="Category" required>
+                            <option selected disabled value="">Choose...</option>
+                            @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.JobCategory)))
+                            {
+                                <option value="@((int)item)">@item</option>
+                            }
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="popupForm" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
