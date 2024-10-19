@@ -1,3 +1,4 @@
+using Jobinator.Data;
 using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +10,21 @@ namespace Jobinator.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private DataContext? _Data;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, DataContext Data)
         {
             _logger = logger;
+            _Data = Data;
         }
 
+
+        [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            var posts = _Data.Posts.ToList();
+
+            return View(posts);
         }
 
         public IActionResult Offer()
