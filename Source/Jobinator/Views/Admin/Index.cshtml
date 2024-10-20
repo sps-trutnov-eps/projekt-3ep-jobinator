@@ -1,0 +1,23 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+@{
+    ViewBag.Title = "Admin Login";
+}
+
+<h2>Welcome to the Admin Home Page</h2>
+
+@using (Html.BeginForm("Login", "Admin", FormMethod.Post))
+{
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" />
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" />
+    </div>
+    <button type="submit">Login</button>
+}
