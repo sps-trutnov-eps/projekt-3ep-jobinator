@@ -36,3 +36,4 @@ document.getElementById('postForm').onsubmit = function (e) {
     // Clear form fields
     document.getElementById('postForm').reset();
 };
+

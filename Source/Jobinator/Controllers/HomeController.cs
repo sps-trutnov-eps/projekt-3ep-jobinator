@@ -3,6 +3,8 @@ using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
+using System.Runtime.Versioning;
 using static Jobinator.Models.Post;
 
 namespace Jobinator.Controllers
@@ -22,9 +24,28 @@ namespace Jobinator.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var posts = _Data.Posts.ToList();
+            var posts = _Data.Posts.ToList(); // loads all posts into a list that is then pasted onto the view
 
             return View(posts);
+        }
+
+        [HttpPost]
+        public IActionResult Filter()
+        {
+            var posts = _Data.Posts.ToList();
+            var filteredPosts = new List<Post>(); // a list that will contain all the posts that pass through the filter
+            string filteredCategory = Request.Form["filter"].ToString(); // saves the selected value in the filter 
+
+            if (!string.IsNullOrEmpty(filteredCategory)) // checks if the filter isnt empty
+            { 
+                foreach (var post in posts)
+                {
+                    if (Convert.ToString(post.Category).Equals(filteredCategory)) filteredPosts.Add(post); // checks if the post category is the same as the filtered one
+                }
+            }
+            else return View("Index", posts); // if no filter is selected it returns all posts
+
+        return View("Index", filteredPosts); // returns the filtered posts
         }
 
         public IActionResult Offer()
