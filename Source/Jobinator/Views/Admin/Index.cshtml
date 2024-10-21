@@ -11,13 +11,13 @@
 
 @using (Html.BeginForm("Login", "Admin", FormMethod.Post))
 {
-    <div>
-        <label for="username">Username:</label>
-        <input type="text" name="username" id="username" />
+    <div class="mb-3">
+        <label for="username" class="form-label">Username:</label>
+        <input type="text" class="form-control w-50" name="username" id="username" placeholder="Enter username">
     </div>
-    <div>
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" />
+    <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" class="form-control w-50" name="password" id="password" placeholder="Enter password">
     </div>
-    <button type="submit">Login</button>
+    <button type="submit" class="btn btn-primary">Login</button>
 }

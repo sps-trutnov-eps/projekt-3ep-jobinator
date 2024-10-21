@@ -1,0 +1,38 @@
+﻿@model List<Post>
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in Model)
+            {
+                <tr>
+                    <td class="align-middle">@post.Title</td>
+                    <td class="align-middle">@post.User.Name</td>
+                    <td class="align-middle">@post.Category.ToString()</td>
+                    <td class="align-middle">@post.Type.ToString()</td>
+                    <td class="align-middle">
+                        <form asp-action="Delete" asp-controller="Admin" method="post">
+                            <input type="hidden" name="postId" value="@post.Id" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
