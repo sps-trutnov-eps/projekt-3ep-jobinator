@@ -7,22 +7,30 @@
 <div class="text-center">
     <h1>Home Page</h1>
 
-
-   
-
     <h3 class="mt-4">Posts</h3>
-    <form asp-action="Filter" method="post">
-        <select name="filter">
-            <option value="">All</option>
-            <option value="IT">IT</option>
-            <option value="Logistics">Logistics</option>
-            <option value="Construction">Construction</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Finance">Finance</option>
-        </select>
-        <button type="submit" class="btn btn-primary" id="filterButton">Filter</button>
-    </form>
-
+    
+        <form asp-action="Filter" method="post">
+        <div class="card-body">
+            <select name="filterCategory" class="form-select-sm">
+                <option value="" disabled selected>Filter by category</option>
+                <option value="">All</option>
+                <option value="IT">IT</option>
+                <option value="Logistics">Logistics</option>
+                <option value="Construction">Construction</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Finance">Finance</option>
+            </select>
+            <select name="filterType" class="form-select-sm">
+                <option value="" disabled selected>Filter by type</option>
+                <option value="">All</option>
+                <option value="Offer">Offer</option>
+                <option value="Demand">Demand</option>
+            </select>
+            <button type="submit" class="btn btn-primary" id="filterButton">Filter</button>
+        </div>
+        </form>
+   
+      
     @if (Model != null && Model.Any())
     {
         <div class="row">
@@ -45,6 +53,5 @@
     {
         <p>No posts found.</p>
     }
-
 
 </div>
