@@ -2,6 +2,7 @@ using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Jobinator.Data;
 using Jobinator.Helpers;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 
 namespace Jobinator.Controllers
@@ -123,6 +124,29 @@ namespace Jobinator.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        
+
+        [HttpGet]
+        public IActionResult SearchUsers()
+        {
+            AuthHelper authHelper = new();
+
+            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+
+            if (LoggedUser == null) return RedirectToAction("Login");
+
+            return View(LoggedUser);
+        }
+
+        [HttpPost]
+        [Route("Profile/{username}")]
+        public IActionResult SearchUsers(string username)
+        {
+            var users = _Data.Users.ToList();
+            foreach (var user in users)
+            {
+
+            }
+            return View();
+        }
     }
 }
