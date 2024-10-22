@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Jobinator.Data;
 using Jobinator.Helpers;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Jobinator.Controllers
@@ -81,18 +82,6 @@ namespace Jobinator.Controllers
             return RedirectToAction("Profile");
         }
 
-        public IActionResult Profile()
-        {
-
-            AuthHelper authHelper = new();
-
-            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
-
-            if (LoggedUser == null) return RedirectToAction("Login");
-
-            return View(LoggedUser);
-        }
-
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -125,28 +114,46 @@ namespace Jobinator.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [HttpGet]
-        public IActionResult SearchUsers()
+        public IActionResult Profile(int? id)
         {
+            // making sure user is logged in
             AuthHelper authHelper = new();
-
             User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
 
             if (LoggedUser == null) return RedirectToAction("Login");
 
-            return View(LoggedUser);
+            User UserToDisplay;
+
+            if (id.HasValue)
+            {
+                // view other user's profile
+                UserToDisplay = _Data.Users.FirstOrDefault(u => u.Id == id.Value);
+                if (UserToDisplay == null) { return RedirectToAction("Profile"); }
+            }
+            else
+            {
+                // view current user's profile
+                UserToDisplay = LoggedUser;
+            }
+
+            return View(UserToDisplay);
         }
 
-        [HttpPost]
-        [Route("Profile/{username}")]
-        public IActionResult SearchUsers(string username)
+        [HttpGet]
+        public async Task<IActionResult> Search(string query)
         {
-            var users = _Data.Users.ToList();
-            foreach (var user in users)
-            {
+            // making sure user is logged in
+            AuthHelper authHelper = new();
 
-            }
-            return View();
+            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+
+            if (LoggedUser == null) return RedirectToAction("Index", "Home");
+
+            var user = await _Data.Users
+                .FirstOrDefaultAsync(u => u.Username.Contains(query));
+
+            // redirect to user's profile
+            return RedirectToAction("Profile", new { id = user.Id });
         }
     }
 }
