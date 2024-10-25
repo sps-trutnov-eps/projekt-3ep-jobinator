@@ -152,7 +152,11 @@ namespace Jobinator.Controllers
             var user = await _Data.Users
                 .FirstOrDefaultAsync(u => u.Username.Contains(query));
 
-            // redirect to user's profile
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             return RedirectToAction("Profile", new { id = user.Id });
         }
     }
