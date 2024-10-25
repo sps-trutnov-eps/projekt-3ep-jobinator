@@ -53,12 +53,16 @@ namespace Jobinator.Controllers
                         removedPosts.Add(post); //adds the posts that didnt pass the filter
                     }
                 }
+                if (post.User == null)
+                {
+                    _Data.Entry(post).Reference(p => p.User).Load(); // loads information about the user to display on the view
+                }
             }
             foreach (var post in removedPosts) {
                 posts.Remove(post); //removes the posts from the main list
             }
 
-        return View("Index", posts); // returns the filtered posts
+            return View("Index", posts); // returns the filtered posts
         }
 
         public IActionResult Offer()
