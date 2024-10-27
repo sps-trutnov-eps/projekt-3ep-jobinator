@@ -1,0 +1,72 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<User>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+<p>
+    <a asp-controller="Admin" asp-action="PostDashboard" class="btn btn-primary">Go to Posts Dashboard</a>
+</p>
+
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Username
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Surname
+                </th>
+                <th>
+                    Num. of Posts
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td class="align-middle">
+                        @user.Id
+                    </td>
+                    <td class="align-middle">
+                        @user.Username
+                    </td>
+                    <td class="align-middle">
+                        @user.Name
+                    </td>
+                    <td class="align-middle">
+                        @user.Surname
+                    </td>
+                    <td>
+                        @user.Posts.Count
+                    </td>
+
+                    <td class="align-middle">
+                        <form asp-action="Delete" asp-controller="Admin" method="post">
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

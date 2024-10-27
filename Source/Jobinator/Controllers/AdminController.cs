@@ -40,10 +40,10 @@ namespace Jobinator.Controllers
                 Debug.WriteLine("Login failed");
             }
 
-            return RedirectToAction("Dashboard");
+            return RedirectToAction("PostDashboard");
         }
 
-        public IActionResult Dashboard()
+        public IActionResult PostDashboard()
         {
             // Verify user is admin
             if (HttpContext.Session.GetString("Admin") != "true")
@@ -53,6 +53,18 @@ namespace Jobinator.Controllers
             //Load all posts
             List<Post> posts = _Data.Posts.Include(p => p.User).ToList() ?? new List<Post>();
             return View(posts); // Pass the 'posts' list into the view
+        }
+        //User accounts dashboard
+        public IActionResult UserDashboard()
+        {
+            // Verify user is admin
+            if (HttpContext.Session.GetString("Admin") != "true")
+            {
+                return RedirectToAction("Index");
+            }
+            // Load all users with their posts
+            List<User> users = _Data.Users.Include(u => u.Posts).ToList() ?? new List<User>();
+            return View(users); // Pass the 'users' list into the view
         }
     }
 }

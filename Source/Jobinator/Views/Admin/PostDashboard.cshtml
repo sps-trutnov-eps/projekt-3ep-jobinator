@@ -6,10 +6,15 @@
 
 <h1 class="mb-4">@ViewData["Title"]</h1>
 
+<p>
+    <a  asp-controller="Admin" asp-action="UserDashboard" class="btn btn-primary">Go to User Dashboard</a>
+</p>
+
 <div class="table-responsive">
     <table class="table">
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Title</th>
                 <th>Author</th>
                 <th>Category</th>
@@ -21,6 +26,7 @@
             @foreach (var post in Model)
             {
                 <tr>
+                    <td class="align-middle">@post.Id</td>
                     <td class="align-middle">@post.Title</td>
                     <td class="align-middle">@post.User.Name</td>
                     <td class="align-middle">@post.Category.ToString()</td>
