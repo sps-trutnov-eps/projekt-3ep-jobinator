@@ -1,7 +1,58 @@
-﻿@{
+﻿@model List<Post>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1>Home Page</h1>
+
+    <h3 class="mt-4">Posts</h3>
+    
+        <form asp-action="Filter" method="post">
+        <div class="card-body">
+            <select name="filterCategory" class="form-select-sm">
+                <option value="" disabled selected>Filter by category</option>
+                <option value="">All</option>
+                <option value="IT">IT</option>
+                <option value="Logistics">Logistics</option>
+                <option value="Construction">Construction</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Finance">Finance</option>
+            </select>
+            <select name="filterType" class="form-select-sm">
+                <option value="" disabled selected>Filter by type</option>
+                <option value="">All</option>
+                <option value="Offer">Offer</option>
+                <option value="Demand">Demand</option>
+            </select>
+            <button type="submit" class="btn btn-primary" id="filterButton">Filter</button>
+        </div>
+        </form>
+   
+      
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            @foreach (var post in Model)
+            { 
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">@post.Title</h5>
+                            <p class="card-text">@post.Content</p>
+                            <p><strong>Type:</strong> @post.Type.ToString()</p>
+                            <p><strong>Category:</strong> @post.Category.ToString()</p>
+                            <p><strong>Posted by:</strong> @post.User?.Username</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No posts found.</p>
+    }
+
 </div>
