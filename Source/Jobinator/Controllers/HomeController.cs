@@ -21,11 +21,10 @@ namespace Jobinator.Controllers
             _Data = Data;
         }
 
-
         [HttpGet]
         public IActionResult Index()
         {
-            var posts = _Data.Posts.ToList(); // loads all posts into a list that is then pasted onto the view
+            var posts = _Data.Posts.Include(p => p.User).ToList(); // loads all posts with user information into a list that is then pasted onto the view
 
             return View(posts);
         }
