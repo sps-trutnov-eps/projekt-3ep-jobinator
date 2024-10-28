@@ -1,13 +1,15 @@
-﻿@model Jobinator.Models.User;
+﻿@model Jobinator.Models.User
 
 @{
     ViewData["Title"] = "Profile";
 }
 
 <h2>@Model.Username's Profile</h2>
+=======
+<p>@Model.Username's Profile</p>
 <!-- Button to trigger the modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#popupFormModal">
-    Create
+<button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#popupFormModal">
+    Create Post
 </button>
 
 <!-- Modal Structure -->
@@ -59,3 +61,28 @@
         </div>
     </div>
 </div>
+
+<!-- Posts Section -->
+<h3 class="mt-4">Your Posts</h3>
+@if (Model.Posts != null && Model.Posts.Any())
+{
+    <div class="row">
+        @foreach (var post in Model.Posts)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@post.Title</h5>
+                        <p class="card-text">@post.Content</p>
+                        <p><strong>Type:</strong> @post.Type.ToString()</p>
+                        <p><strong>Category:</strong> @post.Category.ToString()</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No posts found.</p>
+}

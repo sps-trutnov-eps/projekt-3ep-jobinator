@@ -82,6 +82,24 @@ namespace Jobinator.Controllers
             return RedirectToAction("Profile");
         }
 
+        public IActionResult Profile()
+        {
+
+            AuthHelper authHelper = new();
+
+            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+
+            if (LoggedUser == null) return RedirectToAction("Login");
+
+
+            // Query all posts from the database
+            _Data.Entry(LoggedUser)
+            .Collection(u => u.Posts)
+            .Load();
+
+            return View(LoggedUser);
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -113,19 +131,6 @@ namespace Jobinator.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
-        public IActionResult Profile()
-        {
-
-            AuthHelper authHelper = new();
-
-            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
-
-            if (LoggedUser == null) return RedirectToAction("Login");
-
-            return View(LoggedUser);
-        }
-
         [Route("UserProfile/{username}")]
         public async Task<IActionResult> UserProfile(string username)
         {
