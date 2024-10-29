@@ -131,10 +131,13 @@ namespace Jobinator.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
         [Route("UserProfile/{username}")]
         public async Task<IActionResult> UserProfile(string username)
         {
-            var user = await _Data.Users.FirstOrDefaultAsync(u => u.Username == username);
+            var user = await _Data.Users
+                .Include(u => u.Posts)
+                .FirstOrDefaultAsync(u => u.Username == username);
 
             if (user == null)
             {
@@ -144,6 +147,7 @@ namespace Jobinator.Controllers
             var viewModel = new User
             {
                 Username = user.Username,
+                Posts = user.Posts
             };
 
             return View(viewModel);
