@@ -180,5 +180,46 @@ namespace Jobinator.Controllers
             // Redirect to user's profile
             return RedirectToAction("UserProfile", "User", new { username = user.Username });
         }
+
+        [HttpPost]
+        [Route("LikeProfile/{username}")]
+        public async Task<IActionResult> LikeProfile(string username)
+        {
+            // Make sure user is logged in
+            AuthHelper authHelper = new();
+            User? loggedInUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+
+            // Redirect to homepage if not logged in
+            if (loggedInUser == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Getting liked
+            var likedUser = await _Data.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (likedUser == null || likedUser.Id == loggedInUser.Id)
+            {
+                // No self-liking
+                return RedirectToAction("UserProfile", new { username });
+            }
+
+            // Check if wasn't liked before
+            var existingLike = await _Data.Likes
+                .FirstOrDefaultAsync(l => l.LikerId == loggedInUser.Id && l.LikedUserId == likedUser.Id);
+
+            if (existingLike == null)
+            {
+                // Create new like
+                var like = new Like
+                {
+                    LikerId = loggedInUser.Id,
+                    LikedUserId = likedUser.Id
+                };
+                _Data.Likes.Add(like);
+                await _Data.SaveChangesAsync();
+            }
+
+            return RedirectToAction("UserProfile", new { username });
+        }
     }
 }
