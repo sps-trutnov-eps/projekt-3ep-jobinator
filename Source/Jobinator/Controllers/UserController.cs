@@ -2,7 +2,6 @@ using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Jobinator.Data;
 using Jobinator.Helpers;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -144,13 +143,8 @@ namespace Jobinator.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var viewModel = new User
-            {
-                Username = user.Username,
-                Posts = user.Posts
-            };
 
-            return View(viewModel);
+            return View(user);
         }
 
         [HttpGet]
