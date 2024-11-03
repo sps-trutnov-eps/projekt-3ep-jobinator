@@ -2,6 +2,7 @@ using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Jobinator.Data;
 using Jobinator.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Jobinator.Controllers
@@ -129,6 +130,53 @@ namespace Jobinator.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        
+
+        [Route("UserProfile/{username}")]
+        public async Task<IActionResult> UserProfile(string username)
+        {
+            var user = await _Data.Users
+                .Include(u => u.Posts)
+                .FirstOrDefaultAsync(u => u.Username == username);
+
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+
+            return View(user);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Search(string query)
+        {
+            // Make sure user is logged in
+            AuthHelper authHelper = new();
+            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+
+            // Redirect to homepage if not logged in
+            if (LoggedUser == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Show the Search page if there's no query
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return View();
+            }
+
+            var user = await _Data.Users
+                .FirstOrDefaultAsync(u => u.Username.Contains(query));
+
+            // If user not found
+            if (user == null)
+            {
+                return View();
+            }
+
+            // Redirect to user's profile
+            return RedirectToAction("UserProfile", "User", new { username = user.Username });
+        }
     }
 }
