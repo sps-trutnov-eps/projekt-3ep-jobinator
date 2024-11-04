@@ -1,4 +1,4 @@
-﻿@model Jobinator.Models.User;
+﻿@model Jobinator.Models.User
 
 @{
     ViewData["Title"] = "Profile";
@@ -13,3 +13,31 @@
 </form>
 
 <p>@Model.Username has @Model.LikeCount likes</p>
+<p><strong>Name:</strong> @Model.Name</p>
+<p><strong>Surname:</strong> @Model.Surname</p>
+
+<!-- Display User's Posts -->
+<h3 class="mt-4">@Model.Username's Posts</h3>
+
+@if (Model.Posts != null && Model.Posts.Any())
+{
+    <div class="row">
+        @foreach (var post in Model.Posts)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@post.Title</h5>
+                        <p class="card-text">@post.Content</p>
+                        <p><strong>Type:</strong> @post.Type.ToString()</p>
+                        <p><strong>Category:</strong> @post.Category.ToString()</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No posts found.</p>
+}

@@ -2,7 +2,6 @@ using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Jobinator.Data;
 using Jobinator.Helpers;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -131,10 +130,13 @@ namespace Jobinator.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
         [Route("UserProfile/{username}")]
         public async Task<IActionResult> UserProfile(string username)
         {
-            var user = await _Data.Users.FirstOrDefaultAsync(u => u.Username == username);
+            var user = await _Data.Users
+                .Include(u => u.Posts)
+                .FirstOrDefaultAsync(u => u.Username == username);
 
             var likeCount = await _Data.Likes.CountAsync(l => l.LikedUserId == user.Id);
 
@@ -149,7 +151,7 @@ namespace Jobinator.Controllers
                 LikeCount = likeCount
             };
 
-            return View(viewModel);
+            return View(user);
         }
 
         [HttpGet]
