@@ -136,6 +136,8 @@ namespace Jobinator.Controllers
         {
             var user = await _Data.Users.FirstOrDefaultAsync(u => u.Username == username);
 
+            var likeCount = await _Data.Likes.CountAsync(l => l.LikedUserId == user.Id);
+
             if (user == null)
             {
                 return RedirectToAction("Index", "Home");
@@ -144,6 +146,7 @@ namespace Jobinator.Controllers
             var viewModel = new User
             {
                 Username = user.Username,
+                LikeCount = likeCount
             };
 
             return View(viewModel);

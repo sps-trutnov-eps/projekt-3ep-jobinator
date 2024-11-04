@@ -25,5 +25,7 @@ namespace Jobinator.Models
         public string PasswordHash { get; set; }
 
         public ICollection<Post>? Posts { get; set; }
+
+        public int LikeCount { get; set; }
     }
 }
