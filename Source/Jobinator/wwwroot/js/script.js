@@ -37,3 +37,24 @@ document.getElementById('postForm').onsubmit = function (e) {
     document.getElementById('postForm').reset();
 };
 
+function darkMode() {
+    if (document.getElementById('darkModeSwitch').checked) {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+        document.cookie = "darkmode=On";
+    } else {
+        document.documentElement.setAttribute("data-bs-theme", "light");
+        document.cookie = "darkmode=Off";
+    }
+}
+
+function checkDarkMode() {
+    let cookie = document.cookie;
+    
+    if (cookie == "darkmode=On") {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+        document.getElementById('darkModeSwitch').checked = true; 
+    }
+    else {
+        document.documentElement.setAttribute("data-bs-theme", "light");
+    }
+}
