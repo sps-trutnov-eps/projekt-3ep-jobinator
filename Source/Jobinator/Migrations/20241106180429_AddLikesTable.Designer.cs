@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jobinator.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241104171539_AddLikeTable")]
-    partial class AddLikeTable
+    [Migration("20241106180429_AddLikesTable")]
+    partial class AddLikesTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
