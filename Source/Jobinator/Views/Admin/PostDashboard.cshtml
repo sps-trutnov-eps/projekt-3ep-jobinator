@@ -32,7 +32,7 @@
                     <td class="align-middle">@post.Category.ToString()</td>
                     <td class="align-middle">@post.Type.ToString()</td>
                     <td class="align-middle">
-                        <form asp-action="Delete" asp-controller="Admin" method="post">
+                        <form asp-action="DeletePost" asp-controller="Admin" method="post">
                             <input type="hidden" name="postId" value="@post.Id" />
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>

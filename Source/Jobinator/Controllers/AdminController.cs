@@ -66,5 +66,43 @@ namespace Jobinator.Controllers
             List<User> users = _Data.Users.Include(u => u.Posts).ToList() ?? new List<User>();
             return View(users); // Pass the 'users' list into the view
         }
+
+        //Delete post
+        [HttpPost]
+        public IActionResult DeletePost(int postId)
+        {
+            // Verify user is admin
+            if (HttpContext.Session.GetString("Admin") != "true")
+            {
+                return RedirectToAction("Index");
+            }
+            // Find the post by id
+            Post post = _Data.Posts.Find(postId);
+            if (post != null)
+            {
+                _Data.Posts.Remove(post);
+                _Data.SaveChanges();
+            }
+            return RedirectToAction("PostDashboard");
+        }
+
+        //Delete user
+        [HttpPost]
+        public IActionResult DeleteUser(int userId)
+        {
+            // Verify user is admin
+            if (HttpContext.Session.GetString("Admin") != "true")
+            {
+                return RedirectToAction("Index");
+            }
+            // Find the user by id
+            User user = _Data.Users.Find(userId);
+            if (user != null)
+            {
+                _Data.Users.Remove(user);
+                _Data.SaveChanges();
+            }
+            return RedirectToAction("UserDashboard");
+        }
     }
 }
