@@ -131,14 +131,13 @@ namespace Jobinator.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [Route("UserProfile/{username}")]
-        public async Task<IActionResult> UserProfile(string username)
+        public IActionResult UserProfile(string username)
         {
-            var user = await _Data.Users
+            var user = _Data.Users
                 .Include(u => u.Posts)
-                .FirstOrDefaultAsync(u => u.Username == username);
+                .FirstOrDefault(u => u.Username == username);
 
-            var likeCount = await _Data.Likes.CountAsync(l => l.LikedUserId == user.Id);
+            var likeCount =  _Data.Likes.Count(l => l.LikedUserId == user.Id);
 
             if (user == null)
             {
@@ -155,7 +154,7 @@ namespace Jobinator.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Search(string query)
+        public IActionResult Search(string query)
         {
             // Make sure user is logged in
             AuthHelper authHelper = new();
@@ -173,8 +172,8 @@ namespace Jobinator.Controllers
                 return View();
             }
 
-            var user = await _Data.Users
-                .FirstOrDefaultAsync(u => u.Username.Contains(query));
+            var user =  _Data.Users
+                .FirstOrDefault(u => u.Username.Contains(query));
 
             // If user not found
             if (user == null)
@@ -187,8 +186,7 @@ namespace Jobinator.Controllers
         }
 
         [HttpPost]
-        [Route("LikeProfile/{username}")]
-        public async Task<IActionResult> LikeProfile(string username)
+        public IActionResult LikeProfile(string username)
         {
             // Make sure user is logged in
             AuthHelper authHelper = new();
@@ -201,7 +199,7 @@ namespace Jobinator.Controllers
             }
 
             // Getting liked
-            var likedUser = await _Data.Users.FirstOrDefaultAsync(u => u.Username == username);
+            var likedUser = _Data.Users.FirstOrDefault(u => u.Username == username);
             if (likedUser == null || likedUser.Id == loggedInUser.Id)
             {
                 // No self-liking
@@ -209,8 +207,8 @@ namespace Jobinator.Controllers
             }
 
             // Check if wasn't liked before
-            var existingLike = await _Data.Likes
-                .FirstOrDefaultAsync(l => l.LikerId == loggedInUser.Id && l.LikedUserId == likedUser.Id);
+            var existingLike = _Data.Likes
+                .FirstOrDefault(l => l.LikerId == loggedInUser.Id && l.LikedUserId == likedUser.Id);
 
             if (existingLike == null)
             {
@@ -221,7 +219,7 @@ namespace Jobinator.Controllers
                     LikedUserId = likedUser.Id
                 };
                 _Data.Likes.Add(like);
-                await _Data.SaveChangesAsync();
+                _Data.SaveChanges();
             }
 
             return RedirectToAction("UserProfile", new { username });
