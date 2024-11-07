@@ -137,7 +137,9 @@ namespace Jobinator.Controllers
                 .Include(u => u.Posts)
                 .FirstOrDefault(u => u.Username == username);
 
-            var likeCount =  _Data.Likes.Count(l => l.LikedUserId == user.Id);
+            // Show amount of likes for user
+            int likesCount = _Data.Likes.Count(l => l.LikedUserId == user.Id);
+            ViewBag.LikesCount = likesCount;
 
             if (user == null)
             {
@@ -147,7 +149,6 @@ namespace Jobinator.Controllers
             var viewModel = new User
             {
                 Username = user.Username,
-                LikeCount = likeCount
             };
 
             return View(user);
