@@ -43,7 +43,7 @@
                             <p class="card-text">@post.Content</p>
                             <p><strong>Type:</strong> @post.Type.ToString()</p>
                             <p><strong>Category:</strong> @post.Category.ToString()</p>
-                            <p><strong>Posted by:</strong> <a href="/UserProfile/@post.User.Username">@post.User.Username</a></p>
+                            <p><strong>Posted by:</strong> <a href="/User/UserProfile?username=@post.User.Username">@post.User.Username</a></p>
                         </div>
                     </div>
                 </div>

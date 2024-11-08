@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Jobinator.Data;
 using Jobinator.Helpers;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 
 namespace Jobinator.Controllers
@@ -133,10 +134,15 @@ namespace Jobinator.Controllers
 
         public IActionResult UserProfile(string username)
         {
+            Debug.WriteLine(username);
             var user = _Data.Users
                 .Include(u => u.Posts)
                 .FirstOrDefault(u => u.Username == username);
-
+            
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             // Show amount of likes for user
             int likesCount = _Data.Likes.Count(l => l.LikedUserId == user.Id);
             ViewBag.LikesCount = likesCount;
@@ -196,7 +202,7 @@ namespace Jobinator.Controllers
             // Redirect to homepage if not logged in
             if (loggedInUser == null)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login");
             }
 
             // Getting liked
