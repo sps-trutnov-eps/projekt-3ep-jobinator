@@ -31,13 +31,15 @@ namespace Jobinator.Controllers
             // Compare username and password
             if (username == AdminUsername && password == AdminPassword)
             {
-                Debug.WriteLine("Login successful");
+                Debug.WriteLine("Admin Login successful");
+                //Clear the session, in case user was logged in as a user
+                HttpContext.Session.Clear();
                 //Use the session to store that user is logged in as admin
                 HttpContext.Session.SetString("Admin", "true");
             }
             else
             {
-                Debug.WriteLine("Login failed");
+                Debug.WriteLine("Admin Login failed");
             }
 
             return RedirectToAction("PostDashboard");

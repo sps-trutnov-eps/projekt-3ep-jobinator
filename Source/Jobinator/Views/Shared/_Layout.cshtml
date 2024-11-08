@@ -25,7 +25,14 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @if (IHttpContextAccessor.HttpContext.Session.GetString("LoggedIn") == null)
+                        @if (IHttpContextAccessor.HttpContext.Session.GetString("Admin") == "true")
+                        {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="User" asp-action="Logout">Admin Logout</a>
+                        </li>
+                        }
+
+                        else if (IHttpContextAccessor.HttpContext.Session.GetString("LoggedIn") == null)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>

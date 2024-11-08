@@ -74,7 +74,13 @@ namespace Jobinator.Controllers
             //verifying if the stored password and the entered password match
             if (!BCrypt.Net.BCrypt.Verify(Password, User.PasswordHash)) return View();
 
-            //saving the username for display on profile page 
+            // Clear http session, just in case he was admin
+            HttpContext.Session.Clear();
+
+
+
+
+            //saving the username for display on profile page
             HttpContext.Session.SetString("LoggedIn", Username);
 
             return RedirectToAction("Profile");
