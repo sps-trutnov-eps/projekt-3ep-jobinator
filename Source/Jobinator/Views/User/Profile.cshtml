@@ -4,11 +4,20 @@
     ViewData["Title"] = "Profile";
 }
 
-<h2>@Model.Username's Profile</h2>
-<!-- Button to trigger the modal -->
-<button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#popupFormModal">
-    Create Post
-</button>
+<div class="container mt-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-body text-center">
+            <h2 class="card-title text-primary mb-3">@Model.Name @Model.Surname's Profile</h2>
+            <h4 class="card-subtitle text-muted mb-3">@Model.Username</h4>
+            <p class="text-secondary">Welcome to your profile page, @Model.Name! Here, you can view and update your profile information.</p>
+
+            <!-- Button to trigger the modal -->
+            <button type="button" class="btn btn-primary mb-4 m-auto" data-bs-toggle="modal" data-bs-target="#popupFormModal">
+                Create Post
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- Modal Structure -->
 <div class="modal fade" id="popupFormModal" tabindex="-1" aria-labelledby="popupFormModalLabel" aria-hidden="true">

@@ -4,17 +4,24 @@
     ViewData["Title"] = "Profile";
 }
 
-<h2>@Model.Username's Profile</h2>
+<div class="container mt-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-body text-center">
+            <h2 class="card-title text-primary mb-3">@Model.Name @Model.Surname's Profile</h2>
+            <h4 class="card-subtitle text-muted mb-3">@Model.Username</h4>
+            <p class="text-secondary">Welcome to @Model.Name's profile page! Here, you can view @Model.Name's posts.</p>
+            <form asp-action="LikeProfile" asp-route-username="@Model.Username" method="post">
+                <button type="submit" class="btn btn-primary mb-3">
+                    Like @Model.Username's Profile
+                </button>
+            </form>
+            <p class="text-muted">
+                <strong>@Model.Username</strong> has <span class="badge bg-secondary">@ViewBag.LikesCount</span> likes
+            </p>
+        </div>
+    </div>
+</div>
 
-<form asp-action="LikeProfile" asp-route-username="@Model.Username" method="post">
-    <button type="submit" class="btn btn-primary">
-        Like @Model.Username's Profile
-    </button>
-</form>
-
-<p>@Model.Username has @ViewBag.LikesCount likes</p>
-<p><strong>Name:</strong> @Model.Name</p>
-<p><strong>Surname:</strong> @Model.Surname</p>
 
 <!-- Display User's Posts -->
 <h3 class="mt-4">@Model.Username's Posts</h3>
