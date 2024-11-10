@@ -1,12 +1,28 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Login";
 }
 
-<form method="post">
-    <input type="text" name="username" placeholder="Enter your usernname" />
+<div class="container mt-5">
+    <div class="card shadow-sm border-0" style="max-width: 400px; margin: auto;">
+        <div class="card-header bg-primary text-white text-center">
+            <h2 class="mb-0">Login to Your Account</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" class="p-3">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" class="form-control" required />
+                </div>
 
-    <input type="password" name="password" placeholder="Enter your password" />
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" class="form-control" required />
+                </div>
 
-    <input type="submit" value="Login"/>
-</form>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary w-50 m-auto">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

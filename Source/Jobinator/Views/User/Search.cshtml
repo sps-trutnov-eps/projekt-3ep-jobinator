@@ -2,7 +2,7 @@
     ViewData["Title"] = "Find other users";
 }
 
-<form asp-action="Search" method="get">
-    <input type="text" name="query" placeholder="Search for a user" />
-    <input type="submit" value="Search" />
+<form asp-action="Search" method="get" class="d-flex justify-content-center">
+    <input class="form-control me-2" type="text" name="query" placeholder="Search for a user" aria-label="Search" style="width: 300px;">
+    <button class="btn btn-primary" type="submit">Search</button>
 </form>

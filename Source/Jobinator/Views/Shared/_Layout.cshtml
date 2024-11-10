@@ -42,10 +42,7 @@
                         else if (IHttpContextAccessor.HttpContext.Session.GetString("LoggedIn") == null)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="Registration">Register</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Registration">Register</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="User" asp-action="Login">Login</a>
@@ -81,9 +78,9 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted position-static">
         <div class="container">
-            &copy; 2024 - Jobinator - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> - <a asp-controller="Admin" asp-action="Index">Admin</a> 
+            &copy; 2024 - Jobinator - <a asp-controller="Admin" asp-action="Index">Admin</a> 
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
