@@ -40,21 +40,40 @@ document.getElementById('postForm').onsubmit = function (e) {
 function darkMode() {
     if (document.getElementById('darkModeSwitch').checked) {
         document.documentElement.setAttribute("data-bs-theme", "dark");
-        document.cookie = "darkmode=On";
+        setCookie("darkMode", "true", 7);
     } else {
         document.documentElement.setAttribute("data-bs-theme", "light");
-        document.cookie = "darkmode=Off";
+        setCookie("darkMode", "false", 7);
     }
 }
 
-function checkDarkMode() {
-    let cookie = document.cookie;
-    
-    if (cookie == "darkmode=On") {
-        document.documentElement.setAttribute("data-bs-theme", "dark");
-        document.getElementById('darkModeSwitch').checked = true; 
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
     }
-    else {
+    document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/; SameSite=Lax";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        let c = cookies[i].trim();
+        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+}
+
+function checkDarkMode() {
+    const cookie = getCookie("darkMode");
+    const cookieValue = cookie === "true";
+    if (cookieValue) {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+        document.getElementById('darkModeSwitch').checked = true;
+    } else {
         document.documentElement.setAttribute("data-bs-theme", "light");
     }
 }
