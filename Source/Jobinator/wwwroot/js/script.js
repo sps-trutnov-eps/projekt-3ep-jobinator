@@ -76,4 +76,7 @@ function checkDarkMode() {
     } else {
         document.documentElement.setAttribute("data-bs-theme", "light");
     }
+
+    //make body visible once the darkmode is determined
+    document.body.style.display = "block";
 }
