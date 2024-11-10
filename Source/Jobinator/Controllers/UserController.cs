@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Jobinator.Data;
 using Jobinator.Helpers;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 
 namespace Jobinator.Controllers
@@ -137,24 +138,36 @@ namespace Jobinator.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [Route("UserProfile/{username}")]
-        public async Task<IActionResult> UserProfile(string username)
+        public IActionResult UserProfile(string username)
         {
-            var user = await _Data.Users
+            Debug.WriteLine(username);
+            var user = _Data.Users
                 .Include(u => u.Posts)
-                .FirstOrDefaultAsync(u => u.Username == username);
+                .FirstOrDefault(u => u.Username == username);
+            
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            // Show amount of likes for user
+            int likesCount = _Data.Likes.Count(l => l.LikedUserId == user.Id);
+            ViewBag.LikesCount = likesCount;
 
             if (user == null)
             {
                 return RedirectToAction("Index", "Home");
             }
 
+            var viewModel = new User
+            {
+                Username = user.Username,
+            };
 
             return View(user);
         }
 
         [HttpGet]
-        public async Task<IActionResult> Search(string query)
+        public IActionResult Search(string query)
         {
             // Make sure user is logged in
             AuthHelper authHelper = new();
@@ -172,8 +185,8 @@ namespace Jobinator.Controllers
                 return View();
             }
 
-            var user = await _Data.Users
-                .FirstOrDefaultAsync(u => u.Username.Contains(query));
+            var user =  _Data.Users
+                .FirstOrDefault(u => u.Username.Contains(query));
 
             // If user not found
             if (user == null)
@@ -183,6 +196,46 @@ namespace Jobinator.Controllers
 
             // Redirect to user's profile
             return RedirectToAction("UserProfile", "User", new { username = user.Username });
+        }
+
+        [HttpPost]
+        public IActionResult LikeProfile(string username)
+        {
+            // Make sure user is logged in
+            AuthHelper authHelper = new();
+            User? loggedInUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+
+            // Redirect to homepage if not logged in
+            if (loggedInUser == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Getting liked
+            var likedUser = _Data.Users.FirstOrDefault(u => u.Username == username);
+            if (likedUser == null || likedUser.Id == loggedInUser.Id)
+            {
+                // No self-liking
+                return RedirectToAction("UserProfile", new { username });
+            }
+
+            // Check if wasn't liked before
+            var existingLike = _Data.Likes
+                .FirstOrDefault(l => l.LikerId == loggedInUser.Id && l.LikedUserId == likedUser.Id);
+
+            if (existingLike == null)
+            {
+                // Create new like
+                var like = new Like
+                {
+                    LikerId = loggedInUser.Id,
+                    LikedUserId = likedUser.Id
+                };
+                _Data.Likes.Add(like);
+                _Data.SaveChanges();
+            }
+
+            return RedirectToAction("UserProfile", new { username });
         }
     }
 }

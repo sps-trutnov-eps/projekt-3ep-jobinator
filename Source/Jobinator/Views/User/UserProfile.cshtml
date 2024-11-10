@@ -5,6 +5,14 @@
 }
 
 <h2>@Model.Username's Profile</h2>
+
+<form asp-action="LikeProfile" asp-route-username="@Model.Username" method="post">
+    <button type="submit" class="btn btn-primary">
+        Like @Model.Username's Profile
+    </button>
+</form>
+
+<p>@Model.Username has @ViewBag.LikesCount likes</p>
 <p><strong>Name:</strong> @Model.Name</p>
 <p><strong>Surname:</strong> @Model.Surname</p>
 
