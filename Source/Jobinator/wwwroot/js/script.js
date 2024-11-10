@@ -37,3 +37,46 @@ document.getElementById('postForm').onsubmit = function (e) {
     document.getElementById('postForm').reset();
 };
 
+function darkMode() {
+    if (document.getElementById('darkModeSwitch').checked) {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+        setCookie("darkMode", "true", 7);
+    } else {
+        document.documentElement.setAttribute("data-bs-theme", "light");
+        setCookie("darkMode", "false", 7);
+    }
+}
+
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/; SameSite=Lax";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        let c = cookies[i].trim();
+        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+}
+
+function checkDarkMode() {
+    const cookie = getCookie("darkMode");
+    const cookieValue = cookie === "true";
+    if (cookieValue) {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+        document.getElementById('darkModeSwitch').checked = true;
+    } else {
+        document.documentElement.setAttribute("data-bs-theme", "light");
+    }
+
+    //make body visible once the darkmode is determined
+    document.body.style.display = "block";
+}
