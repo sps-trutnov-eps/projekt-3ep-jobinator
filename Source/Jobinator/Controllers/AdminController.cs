@@ -18,6 +18,11 @@ namespace Jobinator.Controllers
 
         public IActionResult Index()
         {
+            //Check if user is already logged in as admin
+            if (HttpContext.Session.GetString("Admin") == "true")
+            {
+                return RedirectToAction("PostDashboard");
+            }
             return View();
         }
 

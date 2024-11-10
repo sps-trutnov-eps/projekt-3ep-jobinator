@@ -35,14 +35,14 @@
                         @if (IHttpContextAccessor.HttpContext.Session.GetString("Admin") == "true")
                         {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="User" asp-action="Logout">Admin Logout</a>
+                            <a class="nav-link" asp-controller="User" asp-action="Logout">Admin Logout</a>
                         </li>
                         }
 
                         else if (IHttpContextAccessor.HttpContext.Session.GetString("LoggedIn") == null)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Registration">Register</a>
+                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="Registration">Register</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="User" asp-action="Login">Login</a>
@@ -60,7 +60,7 @@
                                 <a class="nav-link" asp-area="" asp-controller="User" asp-action="DeleteAccount">Delete account</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Search">Find user</a>
+                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="Search">Find user</a>
                             </li>
                         }
                     </ul>
