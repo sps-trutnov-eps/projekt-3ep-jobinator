@@ -18,7 +18,7 @@ namespace Jobinator.Controllers
 
         public IActionResult Index()
         {
-            //Check if user is already logged in as admin
+            // Kontrola, zda je uživatel již přihlášen jako administrátor
             if (HttpContext.Session.GetString("Admin") == "true")
             {
                 return RedirectToAction("PostDashboard");
@@ -29,17 +29,17 @@ namespace Jobinator.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            //Load creds from config
+            // Načtení administrátorských údajů z konfiguračního souboru
             string AdminUsername = _config["AdminCredentials:Username"];
             string AdminPassword = _config["AdminCredentials:Password"];
 
-            // Compare username and password
+            // Porovnání zadaných údajů s konfigurací
             if (username == AdminUsername && password == AdminPassword)
             {
                 Debug.WriteLine("Admin Login successful");
-                //Clear the session, in case user was logged in as a user
+                // Vymazání session pro případ, že byl uživatel přihlášen jako běžný uživatel
                 HttpContext.Session.Clear();
-                //Use the session to store that user is logged in as admin
+                // Nastavení admin příznaku do session
                 HttpContext.Session.SetString("Admin", "true");
             }
             else
@@ -50,40 +50,40 @@ namespace Jobinator.Controllers
             return RedirectToAction("PostDashboard");
         }
 
+        // Dashboard pro správu všech příspěvků
         public async Task<IActionResult> PostDashboard()
         {
-            // Verify user is admin
+            // Ověření admin přístupu
             if (HttpContext.Session.GetString("Admin") != "true")
             {
                 return RedirectToAction("Index");
             }
-            //Load all posts
+            // Načtení všech příspěvků včetně informací o autorech
             List<Post> posts = await _Data.Posts.Include(p => p.User).ToListAsync() ?? new List<Post>();
-            return View(posts); // Pass the 'posts' list into the view
-        }
-        //User accounts dashboard
-        public async Task<IActionResult> UserDashboard()
-        {
-            // Verify user is admin
-            if (HttpContext.Session.GetString("Admin") != "true")
-            {
-                return RedirectToAction("Index");
-            }
-            // Load all users with their posts
-            List<User> users = await _Data.Users.Include(u => u.Posts).ToListAsync() ?? new List<User>();
-            return View(users); // Pass the 'users' list into the view
+            return View(posts); 
         }
 
-        //Delete post
+        // Dashboard pro správu uživatelských účtů
+        public async Task<IActionResult> UserDashboard()
+        {
+            if (HttpContext.Session.GetString("Admin") != "true")
+            {
+                return RedirectToAction("Index");
+            }
+            // Načtení všech uživatelů i s jejich příspěvky
+            List<User> users = await _Data.Users.Include(u => u.Posts).ToListAsync() ?? new List<User>();
+            return View(users); 
+        }
+
+        // Odstranění příspěvku administrátorem
         [HttpPost]
         public async Task<IActionResult> DeletePost(int postId)
         {
-            // Verify user is admin
             if (HttpContext.Session.GetString("Admin") != "true")
             {
                 return RedirectToAction("Index");
             }
-            // Find the post by id
+            // Vyhledání a smazání příspěvku
             Post? post = await _Data.Posts.FindAsync(postId);
             if (post != null)
             {
@@ -93,16 +93,15 @@ namespace Jobinator.Controllers
             return RedirectToAction("PostDashboard");
         }
 
-        //Delete user
+        // Odstranění uživatelského účtu administrátorem
         [HttpPost]
         public async Task<IActionResult> DeleteUser(int userId)
         {
-            // Verify user is admin
             if (HttpContext.Session.GetString("Admin") != "true")
             {
                 return RedirectToAction("Index");
             }
-            // Find the user by id
+            // Vyhledání a smazání uživatele
             User? user = await _Data.Users.FindAsync(userId);
             if (user != null)
             {

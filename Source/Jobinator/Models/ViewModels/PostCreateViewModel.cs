@@ -3,6 +3,7 @@ using static Jobinator.Models.Post;
 
 namespace Jobinator.Models.ViewModels
 {
+    // ViewModel pro vytvoření nového příspěvku (nabídka/poptávka)
     public class PostCreateViewModel
     {
         [Required(ErrorMessage = "Please select a category")]

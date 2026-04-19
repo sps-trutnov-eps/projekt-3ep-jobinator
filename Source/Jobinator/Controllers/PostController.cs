@@ -17,21 +17,22 @@ namespace Jobinator.Controllers
             _authHelper = authHelper;
         }
 
+        // Vytvoření nového příspěvku (nabídka nebo poptávka)
         [HttpPost]
         public async Task<IActionResult> Create(PostCreateViewModel model)
         {
-            // Check if user is logged in
+            // Kontrola, zda je uživatel přihlášen pomocí injektovaného pomocníka
             User? LoggedUser = _authHelper.GetLoggedInUser();
             if (LoggedUser == null) return RedirectToAction("Login", "User");
 
+            // Validace vstupních dat
             if (!ModelState.IsValid)
             {
-                // If validation fails, we return to the view that called it.
-                // Depending on your UI, you might want to return to Offer or Demand views.
+                // Při neúspěšné validaci přesměruje zpět na příslušnou stránku
                 return RedirectToAction(model.Type == Post.PostType.Offer ? "Offer" : "Demand", "Home");
             }
 
-            // Map ViewModel to Database Model
+            // Mapování ViewModelu na databázový model Post
             Post newPost = new Post
             {
                 Title = model.Title,
@@ -41,13 +42,11 @@ namespace Jobinator.Controllers
                 UserId = LoggedUser.Id
             };
 
-            // Add post to database
+            // Přidání do DB a asynchronní uložení změn
             _Data.Posts.Add(newPost);
-
-            // Save changes
             await _Data.SaveChangesAsync();
 
-            // Redirect to user profile
+            // Po úspěšném vytvoření přesměruje na profil uživatele
             return RedirectToAction("Profile", "User");
         }
     }

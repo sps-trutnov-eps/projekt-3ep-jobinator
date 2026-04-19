@@ -12,25 +12,37 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-        // Ensure you add DbContext and use the connection string from appsettings.json
+        // Přidání služeb do DI kontejneru
+        // Konfigurace DbContextu pro SQL Server s připojením definovaným v appsettings.json
         builder.Services.AddDbContext<DataContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("JobinatorDatabase")));
 
+        // Přidání podpory pro MVC (Controller s View)
         builder.Services.AddControllersWithViews();
+        
+        // Služba pro přístup k aktuálnímu HttpContextu (nutné pro IAuthHelper)
         builder.Services.AddHttpContextAccessor();
+        
+        // Přidání podpory pro Session (používá se pro přihlášení uživatele)
         builder.Services.AddSession();
+        
+        // Registrace naší vlastní služby pro autentizaci
         builder.Services.AddScoped<IAuthHelper, AuthHelper>();
 
         var app = builder.Build();
 
-        // Code to test the database in early stages of development
-        //TestDB(app);
-        // Configure the HTTP request pipeline, middleware, etc.
+        // Konfigurace middleware pipeliny
         app.UseRouting();
+        
+        // Nastavení výchozí routy pro controllery
         app.MapDefaultControllerRoute();
+        
+        // Aktivace Session middleware
         app.UseSession();
+        
+        // Povolení statických souborů (CSS, JS, obrázky) ve wwwroot
         app.UseStaticFiles();
+        
         app.Run();
     }
 

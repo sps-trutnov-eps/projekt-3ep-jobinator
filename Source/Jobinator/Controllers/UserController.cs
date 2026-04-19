@@ -14,25 +14,29 @@ namespace Jobinator.Controllers
         private readonly DataContext _Data;
         private readonly IAuthHelper _authHelper;
 
+        // Injekce závislostí pro databázi a pomocníka pro autentizaci
         public UserController(DataContext Data, IAuthHelper authHelper)
         {
             _Data = Data;
             _authHelper = authHelper;
         }
+
         public IActionResult Registration()
         {
             return View();
         }
 
+        // Zpracování registrace nového uživatele
         [HttpPost]
         public async Task<IActionResult> Registration(RegisterViewModel model)
         {
+            // Validace modelu (datové anotace)
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            //checking to see if the username isnt already taken
+            // Kontrola, zda uživatelské jméno již neexistuje
             bool userExists = await _Data.Users.AnyAsync(u => u.Username == model.Username);
             if (userExists)
             {
@@ -45,11 +49,11 @@ namespace Jobinator.Controllers
                 Username = model.Username,
                 Name = model.Name,
                 Surname = model.Surname,
-                // Hashing the password using BCrypt
+                // Bezpečné hashování hesla pomocí BCrypt
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
             };
 
-            // adding user to the database
+            // Uložení nového uživatele do databáze
             _Data.Users.Add(NewUser);
             await _Data.SaveChangesAsync();
 
@@ -61,6 +65,7 @@ namespace Jobinator.Controllers
             return View();
         }
 
+        // Zpracování přihlášení uživatele
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -69,34 +74,32 @@ namespace Jobinator.Controllers
                 return View(model);
             }
 
-
-            //checking if the user exists
+            // Vyhledání uživatele podle jména
             User? user = await _Data.Users
                 .FirstOrDefaultAsync(u => u.Username == model.Username);
             
+            // Ověření existence uživatele a správnosti hesla
             if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {
                 ModelState.AddModelError(string.Empty, "Invalid username or password.");
                 return View(model);
             }
 
-            // Clear http session, just in case he was admin
+            // Vyčištění session a nastavení přihlášeného uživatele
             HttpContext.Session.Clear();
-
-            //saving the username for display on profile page
             HttpContext.Session.SetString("LoggedIn", user.Username);
 
             return RedirectToAction("Profile");
         }
 
+        // Zobrazení profilu přihlášeného uživatele
         public async Task<IActionResult> Profile()
         {
             User? LoggedUser = _authHelper.GetLoggedInUser();
 
             if (LoggedUser == null) return RedirectToAction("Login");
 
-
-            // Query all posts from the database
+            // Explicitní načtení příspěvků daného uživatele
             await _Data.Entry(LoggedUser)
                 .Collection(u => u.Posts)
                 .LoadAsync();

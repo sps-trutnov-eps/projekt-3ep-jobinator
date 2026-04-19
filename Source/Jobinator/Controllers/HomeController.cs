@@ -21,33 +21,34 @@ namespace Jobinator.Controllers
             _Data = Data;
         }
 
+        // Hlavní stránka - asynchronně načte všechny příspěvky včetně informací o autorech
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var posts = await _Data.Posts.Include(p => p.User).ToListAsync(); // loads all posts with user information into a list that is then pasted onto the view
-
+            var posts = await _Data.Posts.Include(p => p.User).ToListAsync(); 
             return View(posts);
         }
 
+        // Filtrování příspěvků - probíhá přímo na straně databáze pro vyšší výkon
         [HttpPost]
         public async Task<IActionResult> Filter(string filterCategory, string filterType)
         {
-            // Start with a queryable object to build the SQL command dynamically
+            // Inicializace dotazu pro dynamické skládání SQL příkazu
             var query = _Data.Posts.Include(p => p.User).AsQueryable();
 
-            // Apply category filter if selected
+            // Filtrování podle kategorie, pokud byla vybrána
             if (!string.IsNullOrEmpty(filterCategory) && Enum.TryParse<JobCategory>(filterCategory, out var categoryEnum))
             {
                 query = query.Where(p => p.Category == categoryEnum);
             }
 
-            // Apply type filter if selected
+            // Filtrování podle typu (Nabídka/Poptávka), pokud bylo vybráno
             if (!string.IsNullOrEmpty(filterType) && Enum.TryParse<PostType>(filterType, out var typeEnum))
             {
                 query = query.Where(p => p.Type == typeEnum);
             }
 
-            // Execute the query at the database level
+            // Spuštění dotazu v databázi a asynchronní načtení výsledků
             var posts = await query.ToListAsync();
 
             return View("Index", posts);
