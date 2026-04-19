@@ -44,7 +44,7 @@
                             <option selected disabled value="">Choose...</option>
                             @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.PostType)))
                             {
-                                <option value="@((int)item)">@item</option>
+                                <option value="@item">@item</option>
                             }
                         </select>
                     </div>
@@ -55,7 +55,7 @@
                             <option selected disabled value="">Choose...</option>
                             @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.JobCategory)))
                             {
-                                <option value="@((int)item)">@item</option>
+                                <option value="@item">@item</option>
                             }
                         </select>
                     </div>
@@ -68,6 +68,10 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
 
 <!-- Posts Section -->
 <h3 class="mt-4">Your Posts</h3>
