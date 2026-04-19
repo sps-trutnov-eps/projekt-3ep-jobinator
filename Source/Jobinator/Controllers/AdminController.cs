@@ -27,6 +27,7 @@ namespace Jobinator.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Login(string username, string password)
         {
             // Načtení administrátorských údajů z konfiguračního souboru
@@ -77,6 +78,7 @@ namespace Jobinator.Controllers
 
         // Odstranění příspěvku administrátorem
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePost(int postId)
         {
             if (HttpContext.Session.GetString("Admin") != "true")
@@ -95,6 +97,7 @@ namespace Jobinator.Controllers
 
         // Odstranění uživatelského účtu administrátorem
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(int userId)
         {
             if (HttpContext.Session.GetString("Admin") != "true")

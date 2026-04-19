@@ -28,6 +28,7 @@ namespace Jobinator.Controllers
 
         // Zpracování registrace nového uživatele
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registration(RegisterViewModel model)
         {
             // Validace modelu (datové anotace)
@@ -67,6 +68,7 @@ namespace Jobinator.Controllers
 
         // Zpracování přihlášení uživatele
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -122,6 +124,7 @@ namespace Jobinator.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAccount(string Password)
         {
             User? LoggedUser = _authHelper.GetLoggedInUser();
@@ -187,6 +190,7 @@ namespace Jobinator.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LikeProfile(string username)
         {
             // Make sure user is logged in

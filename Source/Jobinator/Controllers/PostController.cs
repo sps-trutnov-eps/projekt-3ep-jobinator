@@ -19,6 +19,7 @@ namespace Jobinator.Controllers
 
         // Vytvoření nového příspěvku (nabídka nebo poptávka)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PostCreateViewModel model)
         {
             // Kontrola, zda je uživatel přihlášen pomocí injektovaného pomocníka
