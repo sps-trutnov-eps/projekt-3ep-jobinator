@@ -2,6 +2,7 @@ using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Jobinator.Data;
 using Jobinator.Helpers;
+using Jobinator.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -24,25 +25,28 @@ namespace Jobinator.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Registration(string Username, string Name, string Surname, string Password, string PasswordCheck)
+        public async Task<IActionResult> Registration(RegisterViewModel model)
         {
-            //making sure that none of the fields are left empty
-            if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Surname) || string.IsNullOrEmpty(Password)) 
-                return View();
-
-            if (PasswordCheck != Password) return View(); //checking if the passwords match
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
             //checking to see if the username isnt already taken
-            bool userExists = await _Data.Users.AnyAsync(u => u.Username == Username);
-            if (userExists) return View();
+            bool userExists = await _Data.Users.AnyAsync(u => u.Username == model.Username);
+            if (userExists)
+            {
+                ModelState.AddModelError("Username", "Username is already taken.");
+                return View(model);
+            }
 
             User NewUser = new User()
             {
-                Username = Username,
-                Name = Name,
-                Surname = Surname,
+                Username = model.Username,
+                Name = model.Name,
+                Surname = model.Surname,
                 // Hashing the password using BCrypt
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(Password),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
             };
 
             // adding user to the database
@@ -58,26 +62,29 @@ namespace Jobinator.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string Username, string Password)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            //checking if the fields arent empty
-            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password)) return View();
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
 
             //checking if the user exists
             User? user = await _Data.Users
-                .FirstOrDefaultAsync(u => u.Username == Username);
+                .FirstOrDefaultAsync(u => u.Username == model.Username);
             
-            if (user == null) return View();
-
-            //verifying if the stored password and the entered password match
-            if (!BCrypt.Net.BCrypt.Verify(Password, user.PasswordHash)) return View();
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
+            {
+                ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                return View(model);
+            }
 
             // Clear http session, just in case he was admin
             HttpContext.Session.Clear();
 
             //saving the username for display on profile page
-            HttpContext.Session.SetString("LoggedIn", Username);
+            HttpContext.Session.SetString("LoggedIn", user.Username);
 
             return RedirectToAction("Profile");
         }

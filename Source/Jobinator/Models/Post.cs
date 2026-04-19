@@ -25,17 +25,18 @@ namespace Jobinator.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Category is required")]
         public JobCategory Category { get; set; }
 
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = "Title is required")]
+        [MaxLength(200, ErrorMessage = "Title cannot exceed 200 characters")]
         public string Title { get; set; } 
 
-        [Required]
+        [Required(ErrorMessage = "Content is required")]
+        [MinLength(10, ErrorMessage = "Content must be at least 10 characters long")]
         public string Content { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Post type is required")]
         public PostType Type { get; set; }
 
         [ForeignKey("User")]

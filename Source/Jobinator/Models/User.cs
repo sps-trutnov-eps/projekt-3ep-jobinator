@@ -8,16 +8,19 @@ namespace Jobinator.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Username is required")]
         [MaxLength(100)]
+        [Display(Name = "Username")]
         public string Username { get; set; }
        
-        [Required]
+        [Required(ErrorMessage = "First Name is required")]
         [MaxLength(100)]
+        [Display(Name = "First Name")]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Surname is required")]
         [MaxLength(100)]
+        [Display(Name = "Surname")]
         public string Surname { get; set; }
 
         [Required]
