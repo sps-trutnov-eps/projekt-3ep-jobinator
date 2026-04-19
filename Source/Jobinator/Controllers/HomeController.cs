@@ -29,8 +29,8 @@ namespace Jobinator.Controllers
             return View(posts);
         }
 
-        // Filtrování příspěvků - probíhá přímo na straně databáze pro vyšší výkon
-        [HttpPost]
+        // Filtrování příspěvků - probíhá přímo na straně databáze pro vyšší výkon (používá GET pro sdílitelné URL)
+        [HttpGet]
         public async Task<IActionResult> Filter(string filterCategory, string filterType)
         {
             // Inicializace dotazu pro dynamické skládání SQL příkazu
