@@ -7,20 +7,20 @@ namespace Jobinator.Controllers
 {
     public class PostController : Controller
     {
-        private DataContext? _Data;
-        public PostController(DataContext Data)
+        private readonly DataContext _Data;
+        private readonly IAuthHelper _authHelper;
+
+        public PostController(DataContext Data, IAuthHelper authHelper)
         {
             _Data = Data;
+            _authHelper = authHelper;
         }
 
         [HttpPost]
-        public IActionResult Create(Post submitedPost)
+        public async Task<IActionResult> Create(Post submitedPost)
         {
-            // AuthHelper instance
-            AuthHelper authHelper = new();
-
-            // Check if user is logged in
-            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+            // Check if user is logged in using injected AuthHelper
+            User? LoggedUser = _authHelper.GetLoggedInUser();
 
             if (LoggedUser == null) return RedirectToAction("Login", "User");
 
@@ -31,7 +31,7 @@ namespace Jobinator.Controllers
             _Data.Posts.Add(submitedPost);
 
             // Save changes
-            _Data.SaveChanges();
+            await _Data.SaveChangesAsync();
 
             // Redirect to user profile
             return RedirectToAction("Profile", "User");

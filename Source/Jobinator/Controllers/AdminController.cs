@@ -50,7 +50,7 @@ namespace Jobinator.Controllers
             return RedirectToAction("PostDashboard");
         }
 
-        public IActionResult PostDashboard()
+        public async Task<IActionResult> PostDashboard()
         {
             // Verify user is admin
             if (HttpContext.Session.GetString("Admin") != "true")
@@ -58,11 +58,11 @@ namespace Jobinator.Controllers
                 return RedirectToAction("Index");
             }
             //Load all posts
-            List<Post> posts = _Data.Posts.Include(p => p.User).ToList() ?? new List<Post>();
+            List<Post> posts = await _Data.Posts.Include(p => p.User).ToListAsync() ?? new List<Post>();
             return View(posts); // Pass the 'posts' list into the view
         }
         //User accounts dashboard
-        public IActionResult UserDashboard()
+        public async Task<IActionResult> UserDashboard()
         {
             // Verify user is admin
             if (HttpContext.Session.GetString("Admin") != "true")
@@ -70,13 +70,13 @@ namespace Jobinator.Controllers
                 return RedirectToAction("Index");
             }
             // Load all users with their posts
-            List<User> users = _Data.Users.Include(u => u.Posts).ToList() ?? new List<User>();
+            List<User> users = await _Data.Users.Include(u => u.Posts).ToListAsync() ?? new List<User>();
             return View(users); // Pass the 'users' list into the view
         }
 
         //Delete post
         [HttpPost]
-        public IActionResult DeletePost(int postId)
+        public async Task<IActionResult> DeletePost(int postId)
         {
             // Verify user is admin
             if (HttpContext.Session.GetString("Admin") != "true")
@@ -84,18 +84,18 @@ namespace Jobinator.Controllers
                 return RedirectToAction("Index");
             }
             // Find the post by id
-            Post post = _Data.Posts.Find(postId);
+            Post? post = await _Data.Posts.FindAsync(postId);
             if (post != null)
             {
                 _Data.Posts.Remove(post);
-                _Data.SaveChanges();
+                await _Data.SaveChangesAsync();
             }
             return RedirectToAction("PostDashboard");
         }
 
         //Delete user
         [HttpPost]
-        public IActionResult DeleteUser(int userId)
+        public async Task<IActionResult> DeleteUser(int userId)
         {
             // Verify user is admin
             if (HttpContext.Session.GetString("Admin") != "true")
@@ -103,11 +103,11 @@ namespace Jobinator.Controllers
                 return RedirectToAction("Index");
             }
             // Find the user by id
-            User user = _Data.Users.Find(userId);
+            User? user = await _Data.Users.FindAsync(userId);
             if (user != null)
             {
                 _Data.Users.Remove(user);
-                _Data.SaveChanges();
+                await _Data.SaveChangesAsync();
             }
             return RedirectToAction("UserDashboard");
         }

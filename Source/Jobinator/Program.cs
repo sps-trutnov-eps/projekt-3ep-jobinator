@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Jobinator.Data;
 using Jobinator.Models;
+using Jobinator.Helpers;
 using System;
 using Azure.Identity;
 using System.Diagnostics;
@@ -19,6 +20,7 @@ public class Program
         builder.Services.AddControllersWithViews();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddSession();
+        builder.Services.AddScoped<IAuthHelper, AuthHelper>();
 
         var app = builder.Build();
 

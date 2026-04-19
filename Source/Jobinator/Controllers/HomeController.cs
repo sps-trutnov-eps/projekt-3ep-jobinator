@@ -22,46 +22,35 @@ namespace Jobinator.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var posts = _Data.Posts.Include(p => p.User).ToList(); // loads all posts with user information into a list that is then pasted onto the view
+            var posts = await _Data.Posts.Include(p => p.User).ToListAsync(); // loads all posts with user information into a list that is then pasted onto the view
 
             return View(posts);
         }
 
         [HttpPost]
-        public IActionResult Filter()
+        public async Task<IActionResult> Filter(string filterCategory, string filterType)
         {
-            var posts = _Data.Posts.ToList(); // a list that will contain all the posts that pass through the filter
-            var removedPosts = new List<Post>(); // list where all the posts that failed the filter will be stored
-            string filteredCategory = Request.Form["filterCategory"].ToString(); // saves the selected value in the category filter 
-            string filteredType = Request.Form["filterType"].ToString();  // saves the selected value in the type filter 
+            // Start with a queryable object to build the SQL command dynamically
+            var query = _Data.Posts.Include(p => p.User).AsQueryable();
 
-            foreach (var post in posts) {
-                if (!string.IsNullOrEmpty(filteredCategory))  // checks if a filter is selected
-                {
-                    if (!Convert.ToString(post.Category).Equals(filteredCategory)) // checks if the post category is the same as the filtered one
-                    {
-                        removedPosts.Add(post); //adds the posts that didnt pass the filter
-                    }
-                }
-                if (!string.IsNullOrEmpty(filteredType)) // checks if a filter is selected
-                {
-                    if (!Convert.ToString(post.Type).Equals(filteredType)) // checks if the post category is the same as the filtered one
-                    {
-                        removedPosts.Add(post); //adds the posts that didnt pass the filter
-                    }
-                }
-                if (post.User == null)
-                {
-                    _Data.Entry(post).Reference(p => p.User).Load(); // loads information about the user to display on the view
-                }
-            }
-            foreach (var post in removedPosts) {
-                posts.Remove(post); //removes the posts from the main list
+            // Apply category filter if selected
+            if (!string.IsNullOrEmpty(filterCategory) && Enum.TryParse<JobCategory>(filterCategory, out var categoryEnum))
+            {
+                query = query.Where(p => p.Category == categoryEnum);
             }
 
-            return View("Index", posts); // returns the filtered posts
+            // Apply type filter if selected
+            if (!string.IsNullOrEmpty(filterType) && Enum.TryParse<PostType>(filterType, out var typeEnum))
+            {
+                query = query.Where(p => p.Type == typeEnum);
+            }
+
+            // Execute the query at the database level
+            var posts = await query.ToListAsync();
+
+            return View("Index", posts);
         }
 
         public IActionResult Offer()
