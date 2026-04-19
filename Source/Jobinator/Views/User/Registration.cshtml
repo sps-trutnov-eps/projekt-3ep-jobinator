@@ -4,49 +4,58 @@
     ViewData["Title"] = "Registration";
 }
 
-<div class="container mt-5 w-50">
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-primary text-white text-center">
-            <h2 class="mb-0">Create Your Account</h2>
-        </div>
-        <div class="card-body">
-            <form asp-action="Registration" method="post" class="p-3">
-                <div asp-validation-summary="All" class="text-danger"></div>
-
-                <div class="mb-3">
-                    <label asp-for="Username" class="form-label"></label>
-                    <input asp-for="Username" placeholder="Input your username" class="form-control" />
-                    <span asp-validation-for="Username" class="text-danger"></span>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h2 class="mb-0">Create Your Account</h2>
                 </div>
+                <div class="card-body p-4">
+                    <form asp-action="Registration" method="post">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label"></label>
-                    <input asp-for="Name" placeholder="Input your name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
+                        <div class="mb-3">
+                            <label asp-for="Username" class="form-label fw-bold"></label>
+                            <input asp-for="Username" placeholder="Choose a username" class="form-control form-control-lg" />
+                            <span asp-validation-for="Username" class="text-danger small"></span>
+                        </div>
 
-                <div class="mb-3">
-                    <label asp-for="Surname" class="form-label"></label>
-                    <input asp-for="Surname" placeholder="Input your surname" class="form-control" />
-                    <span asp-validation-for="Surname" class="text-danger"></span>
-                </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Name" class="form-label fw-bold"></label>
+                                <input asp-for="Name" placeholder="First name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Surname" class="form-label fw-bold"></label>
+                                <input asp-for="Surname" placeholder="Last name" class="form-control" />
+                                <span asp-validation-for="Surname" class="text-danger small"></span>
+                            </div>
+                        </div>
 
-                <div class="mb-3">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input asp-for="Password" placeholder="Create your password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-bold"></label>
+                            <input asp-for="Password" type="password" placeholder="Create a password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
 
-                <div class="mb-3">
-                    <label asp-for="PasswordCheck" class="form-label"></label>
-                    <input asp-for="PasswordCheck" placeholder="Enter your password again" class="form-control" />
-                    <span asp-validation-for="PasswordCheck" class="text-danger"></span>
-                </div>
+                        <div class="mb-3">
+                            <label asp-for="PasswordCheck" class="form-label fw-bold"></label>
+                            <input asp-for="PasswordCheck" type="password" placeholder="Confirm your password" class="form-control" />
+                            <span asp-validation-for="PasswordCheck" class="text-danger small"></span>
+                        </div>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary w-50 m-auto">Create Account</button>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <p class="small text-muted">Already have an account? <a asp-action="Login">Login here</a></p>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
