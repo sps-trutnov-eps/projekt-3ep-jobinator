@@ -2,8 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Jobinator.Data;
 using Jobinator.Models;
 using Jobinator.Helpers;
-using System;
-using Azure.Identity;
 using System.Diagnostics;
 
 public class Program
