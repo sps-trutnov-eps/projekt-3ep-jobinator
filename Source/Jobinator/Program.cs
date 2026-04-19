@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +42,14 @@ public class Program
         
         // Povolení statických souborů (CSS, JS, obrázky) ve wwwroot
         app.UseStaticFiles();
+
+        // Automatické naplnění databáze testovacími daty při startu, pokud je prázdná
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<DataContext>();
+            await DbSeeder.SeedAsync(context);
+        }
         
         app.Run();
     }
