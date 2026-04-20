@@ -1,34 +1,58 @@
 using Microsoft.EntityFrameworkCore;
 using Jobinator.Data;
 using Jobinator.Models;
-using System;
-using Azure.Identity;
+using Jobinator.Helpers;
 using System.Diagnostics;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-        // Ensure you add DbContext and use the connection string from appsettings.json
+        // Přidání služeb do DI kontejneru
+        // Konfigurace DbContextu pro SQL Server s připojením definovaným v appsettings.json
         builder.Services.AddDbContext<DataContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("JobinatorDatabase")));
 
+        // Přidání podpory pro MVC (Controller s View)
         builder.Services.AddControllersWithViews();
+        
+        // Služba pro přístup k aktuálnímu HttpContextu (nutné pro IAuthHelper)
         builder.Services.AddHttpContextAccessor();
+        
+        // Přidání podpory pro Session (používá se pro přihlášení uživatele)
+        builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession();
+        
+        // Registrace naší vlastní služby pro autentizaci
+        builder.Services.AddScoped<IAuthHelper, AuthHelper>();
 
         var app = builder.Build();
 
-        // Code to test the database in early stages of development
-        //TestDB(app);
-        // Configure the HTTP request pipeline, middleware, etc.
-        app.UseRouting();
-        app.MapDefaultControllerRoute();
-        app.UseSession();
+        // Konfigurace middleware pipeliny
+        // Povolení statických souborů (CSS, JS, obrázky) ve wwwroot (před routováním pro výkon)
         app.UseStaticFiles();
+
+        app.UseRouting();
+        
+        // Aktivace Session middleware (před mapováním endpointů, aby byla session dostupná v controllerech)
+        app.UseSession();
+        
+        // Nastavení výchozí routy pro controllery
+        app.MapDefaultControllerRoute();
+
+        // Automatické naplnění databáze testovacími daty při startu v režimu Development
+        if (app.Environment.IsDevelopment())
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<DataContext>();
+                await DbSeeder.SeedAsync(context);
+            }
+        }
+        
         app.Run();
     }
 

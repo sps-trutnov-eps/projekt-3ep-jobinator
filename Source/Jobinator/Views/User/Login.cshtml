@@ -1,28 +1,46 @@
-﻿@{
+@model Jobinator.Models.ViewModels.LoginViewModel
+
+@{
     ViewData["Title"] = "Login";
 }
 
 <div class="container mt-5">
-    <div class="card shadow-sm border-0" style="max-width: 400px; margin: auto;">
-        <div class="card-header bg-primary text-white text-center">
-            <h2 class="mb-0">Login to Your Account</h2>
-        </div>
-        <div class="card-body">
-            <form method="post" class="p-3">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Enter your username" class="form-control" required />
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h2 class="mb-0">Login</h2>
                 </div>
+                <div class="card-body p-4">
+                    <form asp-action="Login" method="post">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" class="form-control" required />
-                </div>
+                        <div class="mb-3">
+                            <label asp-for="Username" class="form-label fw-bold"></label>
+                            <input asp-for="Username" placeholder="Enter your username" class="form-control form-control-lg" />
+                            <span asp-validation-for="Username" class="text-danger small"></span>
+                        </div>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary w-50 m-auto">Login</button>
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-bold"></label>
+                            <input asp-for="Password" type="password" placeholder="Enter your password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <p class="small text-muted">Don't have an account? <a asp-action="Registration">Register here</a></p>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

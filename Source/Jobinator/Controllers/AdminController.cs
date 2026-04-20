@@ -9,7 +9,7 @@ namespace Jobinator.Controllers
     public class AdminController : Controller
     {
         private readonly IConfiguration _config;
-        private DataContext? _Data;
+        private readonly DataContext _Data;
         public AdminController(IConfiguration config, DataContext Data)
         {
             _config = config;
@@ -18,7 +18,7 @@ namespace Jobinator.Controllers
 
         public IActionResult Index()
         {
-            //Check if user is already logged in as admin
+            // Kontrola, zda je uživatel již přihlášen jako administrátor
             if (HttpContext.Session.GetString("Admin") == "true")
             {
                 return RedirectToAction("PostDashboard");
@@ -27,19 +27,25 @@ namespace Jobinator.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Login(string username, string password)
         {
-            //Load creds from config
-            string AdminUsername = _config["AdminCredentials:Username"];
-            string AdminPassword = _config["AdminCredentials:Password"];
+            // Načtení administrátorských údajů z konfiguračního souboru
+            string? AdminUsername = _config["AdminCredentials:Username"];
+            string? AdminPassword = _config["AdminCredentials:Password"];
 
-            // Compare username and password
-            if (username == AdminUsername && password == AdminPassword)
+            // Kontrola: Údaje v konfiguraci nesmí být prázdné a musí odpovídat vstupu
+            if (!string.IsNullOrEmpty(AdminUsername) && 
+                !string.IsNullOrEmpty(AdminPassword) && 
+                !string.IsNullOrEmpty(username) &&
+                !string.IsNullOrEmpty(password) &&
+                username == AdminUsername && 
+                password == AdminPassword)
             {
                 Debug.WriteLine("Admin Login successful");
-                //Clear the session, in case user was logged in as a user
+                // Vymazání session pro případ, že byl uživatel přihlášen jako běžný uživatel
                 HttpContext.Session.Clear();
-                //Use the session to store that user is logged in as admin
+                // Nastavení admin příznaku do session
                 HttpContext.Session.SetString("Admin", "true");
             }
             else
@@ -50,64 +56,72 @@ namespace Jobinator.Controllers
             return RedirectToAction("PostDashboard");
         }
 
-        public IActionResult PostDashboard()
+        // Dashboard pro správu všech příspěvků
+        public async Task<IActionResult> PostDashboard()
         {
-            // Verify user is admin
+            // Ověření admin přístupu
             if (HttpContext.Session.GetString("Admin") != "true")
             {
                 return RedirectToAction("Index");
             }
-            //Load all posts
-            List<Post> posts = _Data.Posts.Include(p => p.User).ToList() ?? new List<Post>();
-            return View(posts); // Pass the 'posts' list into the view
-        }
-        //User accounts dashboard
-        public IActionResult UserDashboard()
-        {
-            // Verify user is admin
-            if (HttpContext.Session.GetString("Admin") != "true")
-            {
-                return RedirectToAction("Index");
-            }
-            // Load all users with their posts
-            List<User> users = _Data.Users.Include(u => u.Posts).ToList() ?? new List<User>();
-            return View(users); // Pass the 'users' list into the view
+            // Načtení všech příspěvků včetně informací o autorech
+            List<Post> posts = await _Data.Posts.Include(p => p.User).ToListAsync();
+            return View(posts); 
         }
 
-        //Delete post
-        [HttpPost]
-        public IActionResult DeletePost(int postId)
+        // Dashboard pro správu uživatelských účtů
+        public async Task<IActionResult> UserDashboard()
         {
-            // Verify user is admin
             if (HttpContext.Session.GetString("Admin") != "true")
             {
                 return RedirectToAction("Index");
             }
-            // Find the post by id
-            Post post = _Data.Posts.Find(postId);
+            // Načtení všech uživatelů i s jejich příspěvky
+            List<User> users = await _Data.Users.Include(u => u.Posts).ToListAsync();
+            return View(users); 
+        }
+
+        // Odstranění příspěvku administrátorem
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePost(int postId)
+        {
+            if (HttpContext.Session.GetString("Admin") != "true")
+            {
+                return RedirectToAction("Index");
+            }
+            // Vyhledání a smazání příspěvku
+            Post? post = await _Data.Posts.FindAsync(postId);
             if (post != null)
             {
                 _Data.Posts.Remove(post);
-                _Data.SaveChanges();
+                await _Data.SaveChangesAsync();
             }
             return RedirectToAction("PostDashboard");
         }
 
-        //Delete user
+        // Odstranění uživatelského účtu administrátorem
         [HttpPost]
-        public IActionResult DeleteUser(int userId)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(int userId)
         {
-            // Verify user is admin
             if (HttpContext.Session.GetString("Admin") != "true")
             {
                 return RedirectToAction("Index");
             }
-            // Find the user by id
-            User user = _Data.Users.Find(userId);
+            // Vyhledání uživatele
+            User? user = await _Data.Users.FindAsync(userId);
             if (user != null)
             {
+                // Odstranění všech lajků spojených s tímto uživatelem (jako odesílatel i příjemce)
+                var associatedLikes = await _Data.Likes
+                    .Where(l => l.LikerId == user.Id || l.LikedUserId == user.Id)
+                    .ToListAsync();
+                
+                _Data.Likes.RemoveRange(associatedLikes);
+
                 _Data.Users.Remove(user);
-                _Data.SaveChanges();
+                await _Data.SaveChangesAsync();
             }
             return RedirectToAction("UserDashboard");
         }

@@ -2,6 +2,7 @@ using Jobinator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Jobinator.Data;
 using Jobinator.Helpers;
+using Jobinator.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -10,46 +11,52 @@ namespace Jobinator.Controllers
 {
     public class UserController : Controller
     {
-        private DataContext? _Data;
+        private readonly DataContext _Data;
+        private readonly IAuthHelper _authHelper;
 
-        public UserController(DataContext Data)
+        // Injekce závislostí pro databázi a pomocníka pro autentizaci
+        public UserController(DataContext Data, IAuthHelper authHelper)
         {
             _Data = Data;
+            _authHelper = authHelper;
         }
+
         public IActionResult Registration()
         {
             return View();
         }
 
+        // Zpracování registrace nového uživatele
         [HttpPost]
-        public IActionResult Registration(string Username, string Name, string Surname, string Password, string PasswordCheck)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Registration(RegisterViewModel model)
         {
-            //making sure that none of the fields are left empty
-            if (Name == null) return View();
-            if (Username == null) return View();
-            if (Surname == null) return View();
-            if (Password == null) return View();
+            // Validace modelu (datové anotace)
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-            if (PasswordCheck != Password) return View(); //checking if the passwords match
-
-            //checking to see if the username isnt already taken
-            User? user = _Data.Users
-                .Where(u => u.Username == Username)
-                .FirstOrDefault();
-            if (user != null) return View();
+            // Kontrola, zda uživatelské jméno již neexistuje
+            bool userExists = await _Data.Users.AnyAsync(u => u.Username == model.Username);
+            if (userExists)
+            {
+                ModelState.AddModelError("Username", "Username is already taken.");
+                return View(model);
+            }
 
             User NewUser = new User()
             {
-                Username = Username,
-                Name = Name,
-                Surname = Surname,
-                // Hashing the password using BCrypt
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(Password),
+                Username = model.Username,
+                Name = model.Name,
+                Surname = model.Surname,
+                // Bezpečné hashování hesla pomocí BCrypt
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
             };
 
-            // adding user to the database
+            // Uložení nového uživatele do databáze
             _Data.Users.Add(NewUser);
-            _Data.SaveChanges();
+            await _Data.SaveChangesAsync();
 
             return RedirectToAction("Login");
         }
@@ -59,49 +66,45 @@ namespace Jobinator.Controllers
             return View();
         }
 
+        // Zpracování přihlášení uživatele
         [HttpPost]
-        public IActionResult Login(string Username, string Password)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            //checking if the fields arent empty
-            if (Username == null) return View();
-            if (Password == null) return View();
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
+            // Vyhledání uživatele podle jména
+            User? user = await _Data.Users
+                .FirstOrDefaultAsync(u => u.Username == model.Username);
+            
+            // Ověření existence uživatele a správnosti hesla
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
+            {
+                ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                return View(model);
+            }
 
-            //checking if the user exists
-            User? User = _Data.Users
-                .Where(u => u.Username == Username)
-                .FirstOrDefault();
-            if (User == null) return View();
-
-            //verifying if the stored password and the entered password match
-            if (!BCrypt.Net.BCrypt.Verify(Password, User.PasswordHash)) return View();
-
-            // Clear http session, just in case he was admin
+            // Vyčištění session a nastavení přihlášeného uživatele
             HttpContext.Session.Clear();
-
-
-
-
-            //saving the username for display on profile page
-            HttpContext.Session.SetString("LoggedIn", Username);
+            HttpContext.Session.SetString("LoggedIn", user.Username);
 
             return RedirectToAction("Profile");
         }
 
-        public IActionResult Profile()
+        // Zobrazení profilu přihlášeného uživatele
+        public async Task<IActionResult> Profile()
         {
-
-            AuthHelper authHelper = new();
-
-            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+            User? LoggedUser = await _authHelper.GetLoggedInUserAsync();
 
             if (LoggedUser == null) return RedirectToAction("Login");
 
-
-            // Query all posts from the database
-            _Data.Entry(LoggedUser)
-            .Collection(u => u.Posts)
-            .Load();
+            // Explicitní načtení příspěvků daného uživatele
+            await _Data.Entry(LoggedUser)
+                .Collection(u => u.Posts)
+                .LoadAsync();
 
             return View(LoggedUser);
         }
@@ -121,57 +124,57 @@ namespace Jobinator.Controllers
 
 
         [HttpPost]
-        public IActionResult DeleteAccount(string Password)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAccount(string Password)
         {
-            AuthHelper authHelper = new();
-
-            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+            User? LoggedUser = await _authHelper.GetLoggedInUserAsync();
 
             if (LoggedUser == null) return RedirectToAction("Index", "Home");
 
-            if (!BCrypt.Net.BCrypt.Verify(Password, LoggedUser.PasswordHash)) return View();
+            if (!BCrypt.Net.BCrypt.Verify(Password, LoggedUser.PasswordHash))
+            {
+                ModelState.AddModelError(string.Empty, "Neplatné heslo.");
+                return View();
+            }
+
+            // Odstranění všech lajků spojených s tímto uživatelem (jako odesílatel i příjemce)
+            var associatedLikes = await _Data.Likes
+                .Where(l => l.LikerId == LoggedUser.Id || l.LikedUserId == LoggedUser.Id)
+                .ToListAsync();
+            
+            _Data.Likes.RemoveRange(associatedLikes);
+
             HttpContext.Session.Clear();
 
             _Data.Users.Remove(LoggedUser);
-            _Data.SaveChanges();
+            await _Data.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult UserProfile(string username)
+        public async Task<IActionResult> UserProfile(string username)
         {
             Debug.WriteLine(username);
-            var user = _Data.Users
+            var user = await _Data.Users
                 .Include(u => u.Posts)
-                .FirstOrDefault(u => u.Username == username);
+                .FirstOrDefaultAsync(u => u.Username == username);
             
             if (user == null)
             {
                 return RedirectToAction("Index", "Home");
             }
             // Show amount of likes for user
-            int likesCount = _Data.Likes.Count(l => l.LikedUserId == user.Id);
+            int likesCount = await _Data.Likes.CountAsync(l => l.LikedUserId == user.Id);
             ViewBag.LikesCount = likesCount;
-
-            if (user == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            var viewModel = new User
-            {
-                Username = user.Username,
-            };
 
             return View(user);
         }
 
         [HttpGet]
-        public IActionResult Search(string query)
+        public async Task<IActionResult> Search(string query)
         {
             // Make sure user is logged in
-            AuthHelper authHelper = new();
-            User? LoggedUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+            User? LoggedUser = await _authHelper.GetLoggedInUserAsync();
 
             // Redirect to homepage if not logged in
             if (LoggedUser == null)
@@ -185,8 +188,8 @@ namespace Jobinator.Controllers
                 return View();
             }
 
-            var user =  _Data.Users
-                .FirstOrDefault(u => u.Username.Contains(query));
+            var user = await _Data.Users
+                .FirstOrDefaultAsync(u => u.Username.Contains(query));
 
             // If user not found
             if (user == null)
@@ -199,11 +202,11 @@ namespace Jobinator.Controllers
         }
 
         [HttpPost]
-        public IActionResult LikeProfile(string username)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LikeProfile(string username)
         {
             // Make sure user is logged in
-            AuthHelper authHelper = new();
-            User? loggedInUser = authHelper.GetLoggedInUser(_Data, HttpContext);
+            User? loggedInUser = await _authHelper.GetLoggedInUserAsync();
 
             // Redirect to homepage if not logged in
             if (loggedInUser == null)
@@ -212,7 +215,7 @@ namespace Jobinator.Controllers
             }
 
             // Getting liked
-            var likedUser = _Data.Users.FirstOrDefault(u => u.Username == username);
+            var likedUser = await _Data.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (likedUser == null || likedUser.Id == loggedInUser.Id)
             {
                 // No self-liking
@@ -220,8 +223,8 @@ namespace Jobinator.Controllers
             }
 
             // Check if wasn't liked before
-            var existingLike = _Data.Likes
-                .FirstOrDefault(l => l.LikerId == loggedInUser.Id && l.LikedUserId == likedUser.Id);
+            var existingLike = await _Data.Likes
+                .FirstOrDefaultAsync(l => l.LikerId == loggedInUser.Id && l.LikedUserId == likedUser.Id);
 
             if (existingLike == null)
             {
@@ -232,7 +235,7 @@ namespace Jobinator.Controllers
                     LikedUserId = likedUser.Id
                 };
                 _Data.Likes.Add(like);
-                _Data.SaveChanges();
+                await _Data.SaveChangesAsync();
             }
 
             return RedirectToAction("UserProfile", new { username });

@@ -13,7 +13,7 @@ namespace Jobinator.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private DataContext? _Data;
+        private readonly DataContext _Data;
 
         public HomeController(ILogger<HomeController> logger, DataContext Data)
         {
@@ -21,47 +21,37 @@ namespace Jobinator.Controllers
             _Data = Data;
         }
 
+        // Hlavní stránka - asynchronně načte všechny příspěvky včetně informací o autorech
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var posts = _Data.Posts.Include(p => p.User).ToList(); // loads all posts with user information into a list that is then pasted onto the view
-
+            var posts = await _Data.Posts.Include(p => p.User).ToListAsync(); 
             return View(posts);
         }
 
-        [HttpPost]
-        public IActionResult Filter()
+        // Filtrování příspěvků - probíhá přímo na straně databáze pro vyšší výkon (používá GET pro sdílitelné URL)
+        [HttpGet]
+        public async Task<IActionResult> Filter(string? filterCategory, string? filterType)
         {
-            var posts = _Data.Posts.ToList(); // a list that will contain all the posts that pass through the filter
-            var removedPosts = new List<Post>(); // list where all the posts that failed the filter will be stored
-            string filteredCategory = Request.Form["filterCategory"].ToString(); // saves the selected value in the category filter 
-            string filteredType = Request.Form["filterType"].ToString();  // saves the selected value in the type filter 
+            // Inicializace dotazu pro dynamické skládání SQL příkazu
+            var query = _Data!.Posts.Include(p => p.User).AsQueryable();
 
-            foreach (var post in posts) {
-                if (!string.IsNullOrEmpty(filteredCategory))  // checks if a filter is selected
-                {
-                    if (!Convert.ToString(post.Category).Equals(filteredCategory)) // checks if the post category is the same as the filtered one
-                    {
-                        removedPosts.Add(post); //adds the posts that didnt pass the filter
-                    }
-                }
-                if (!string.IsNullOrEmpty(filteredType)) // checks if a filter is selected
-                {
-                    if (!Convert.ToString(post.Type).Equals(filteredType)) // checks if the post category is the same as the filtered one
-                    {
-                        removedPosts.Add(post); //adds the posts that didnt pass the filter
-                    }
-                }
-                if (post.User == null)
-                {
-                    _Data.Entry(post).Reference(p => p.User).Load(); // loads information about the user to display on the view
-                }
-            }
-            foreach (var post in removedPosts) {
-                posts.Remove(post); //removes the posts from the main list
+            // Filtrování podle kategorie, pokud byla vybrána
+            if (!string.IsNullOrEmpty(filterCategory) && Enum.TryParse<JobCategory>(filterCategory, out var categoryEnum))
+            {
+                query = query.Where(p => p.Category == categoryEnum);
             }
 
-            return View("Index", posts); // returns the filtered posts
+            // Filtrování podle typu (Nabídka/Poptávka), pokud bylo vybráno
+            if (!string.IsNullOrEmpty(filterType) && Enum.TryParse<PostType>(filterType, out var typeEnum))
+            {
+                query = query.Where(p => p.Type == typeEnum);
+            }
+
+            // Spuštění dotazu v databázi a asynchronní načtení výsledků
+            var posts = await query.ToListAsync();
+
+            return View("Index", posts);
         }
 
         public IActionResult Offer()
