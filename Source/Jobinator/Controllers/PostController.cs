@@ -22,8 +22,8 @@ namespace Jobinator.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PostCreateViewModel model)
         {
-            // Kontrola, zda je uživatel přihlášen pomocí injektovaného pomocníka
-            User? LoggedUser = _authHelper.GetLoggedInUser();
+            // Kontrola, zda je uživatel přihlášen pomocí injektovaného pomocníka asynchronně
+            User? LoggedUser = await _authHelper.GetLoggedInUserAsync();
             if (LoggedUser == null) return RedirectToAction("Login", "User");
 
             // Validace vstupních dat

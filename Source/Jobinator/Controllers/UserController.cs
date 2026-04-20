@@ -97,7 +97,7 @@ namespace Jobinator.Controllers
         // Zobrazení profilu přihlášeného uživatele
         public async Task<IActionResult> Profile()
         {
-            User? LoggedUser = _authHelper.GetLoggedInUser();
+            User? LoggedUser = await _authHelper.GetLoggedInUserAsync();
 
             if (LoggedUser == null) return RedirectToAction("Login");
 
@@ -127,7 +127,7 @@ namespace Jobinator.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAccount(string Password)
         {
-            User? LoggedUser = _authHelper.GetLoggedInUser();
+            User? LoggedUser = await _authHelper.GetLoggedInUserAsync();
 
             if (LoggedUser == null) return RedirectToAction("Index", "Home");
 
@@ -162,7 +162,7 @@ namespace Jobinator.Controllers
         public async Task<IActionResult> Search(string query)
         {
             // Make sure user is logged in
-            User? LoggedUser = _authHelper.GetLoggedInUser();
+            User? LoggedUser = await _authHelper.GetLoggedInUserAsync();
 
             // Redirect to homepage if not logged in
             if (LoggedUser == null)
@@ -194,7 +194,7 @@ namespace Jobinator.Controllers
         public async Task<IActionResult> LikeProfile(string username)
         {
             // Make sure user is logged in
-            User? loggedInUser = _authHelper.GetLoggedInUser();
+            User? loggedInUser = await _authHelper.GetLoggedInUserAsync();
 
             // Redirect to homepage if not logged in
             if (loggedInUser == null)

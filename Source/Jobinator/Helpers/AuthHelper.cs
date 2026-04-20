@@ -1,13 +1,14 @@
 using Jobinator.Data;
 using Jobinator.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace Jobinator.Helpers
 {
     public interface IAuthHelper
     {
-        User? GetLoggedInUser();
+        Task<User?> GetLoggedInUserAsync();
     }
 
     public class AuthHelper : IAuthHelper
@@ -21,8 +22,8 @@ namespace Jobinator.Helpers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        // Metoda pro získání aktuálně přihlášeného uživatele ze session
-        public User? GetLoggedInUser()
+        // Metoda pro získání aktuálně přihlášeného uživatele ze session - asynchronně
+        public async Task<User?> GetLoggedInUserAsync()
         {
             var httpContext = _httpContextAccessor.HttpContext;
             if (httpContext == null) return null;
@@ -31,9 +32,9 @@ namespace Jobinator.Helpers
             string? loggedInUsername = httpContext.Session.GetString("LoggedIn");
             if (string.IsNullOrEmpty(loggedInUsername)) return null;
 
-            // Vyhledání uživatele v databázi podle jména ze session
-            return _data.Users
-                .FirstOrDefault(u => u.Username == loggedInUsername);
+            // Vyhledání uživatele v databázi podle jména ze session asynchronně
+            return await _data.Users
+                .FirstOrDefaultAsync(u => u.Username == loggedInUsername);
         }
     }
 }
