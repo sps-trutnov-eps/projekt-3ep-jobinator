@@ -41,12 +41,15 @@ public class Program
         // Povolení statických souborů (CSS, JS, obrázky) ve wwwroot
         app.UseStaticFiles();
 
-        // Automatické naplnění databáze testovacími daty při startu, pokud je prázdná
-        using (var scope = app.Services.CreateScope())
+        // Automatické naplnění databáze testovacími daty při startu v režimu Development
+        if (app.Environment.IsDevelopment())
         {
-            var services = scope.ServiceProvider;
-            var context = services.GetRequiredService<DataContext>();
-            await DbSeeder.SeedAsync(context);
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<DataContext>();
+                await DbSeeder.SeedAsync(context);
+            }
         }
         
         app.Run();
