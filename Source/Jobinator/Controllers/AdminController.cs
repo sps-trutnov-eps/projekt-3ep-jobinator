@@ -9,7 +9,7 @@ namespace Jobinator.Controllers
     public class AdminController : Controller
     {
         private readonly IConfiguration _config;
-        private DataContext? _Data;
+        private readonly DataContext _Data;
         public AdminController(IConfiguration config, DataContext Data)
         {
             _config = config;
@@ -31,8 +31,8 @@ namespace Jobinator.Controllers
         public IActionResult Login(string username, string password)
         {
             // Načtení administrátorských údajů z konfiguračního souboru
-            string AdminUsername = _config["AdminCredentials:Username"];
-            string AdminPassword = _config["AdminCredentials:Password"];
+            string? AdminUsername = _config["AdminCredentials:Username"];
+            string? AdminPassword = _config["AdminCredentials:Password"];
 
             // Porovnání zadaných údajů s konfigurací
             if (username == AdminUsername && password == AdminPassword)
@@ -60,7 +60,7 @@ namespace Jobinator.Controllers
                 return RedirectToAction("Index");
             }
             // Načtení všech příspěvků včetně informací o autorech
-            List<Post> posts = await _Data.Posts.Include(p => p.User).ToListAsync() ?? new List<Post>();
+            List<Post> posts = await _Data.Posts.Include(p => p.User).ToListAsync();
             return View(posts); 
         }
 
@@ -72,7 +72,7 @@ namespace Jobinator.Controllers
                 return RedirectToAction("Index");
             }
             // Načtení všech uživatelů i s jejich příspěvky
-            List<User> users = await _Data.Users.Include(u => u.Posts).ToListAsync() ?? new List<User>();
+            List<User> users = await _Data.Users.Include(u => u.Posts).ToListAsync();
             return View(users); 
         }
 

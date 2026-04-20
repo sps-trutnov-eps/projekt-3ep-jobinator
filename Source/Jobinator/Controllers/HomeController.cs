@@ -13,7 +13,7 @@ namespace Jobinator.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private DataContext? _Data;
+        private readonly DataContext _Data;
 
         public HomeController(ILogger<HomeController> logger, DataContext Data)
         {
