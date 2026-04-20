@@ -31,10 +31,10 @@ namespace Jobinator.Controllers
 
         // Filtrování příspěvků - probíhá přímo na straně databáze pro vyšší výkon (používá GET pro sdílitelné URL)
         [HttpGet]
-        public async Task<IActionResult> Filter(string filterCategory, string filterType)
+        public async Task<IActionResult> Filter(string? filterCategory, string? filterType)
         {
             // Inicializace dotazu pro dynamické skládání SQL příkazu
-            var query = _Data.Posts.Include(p => p.User).AsQueryable();
+            var query = _Data!.Posts.Include(p => p.User).AsQueryable();
 
             // Filtrování podle kategorie, pokud byla vybrána
             if (!string.IsNullOrEmpty(filterCategory) && Enum.TryParse<JobCategory>(filterCategory, out var categoryEnum))

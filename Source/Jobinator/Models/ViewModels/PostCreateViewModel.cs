@@ -7,7 +7,7 @@ namespace Jobinator.Models.ViewModels
     public class PostCreateViewModel
     {
         [Required(ErrorMessage = "Please select a category")]
-        public JobCategory Category { get; set; }
+        public JobCategory? Category { get; set; }
 
         [Required(ErrorMessage = "Title is required")]
         [MaxLength(200, ErrorMessage = "Title cannot exceed 200 characters")]
@@ -18,6 +18,6 @@ namespace Jobinator.Models.ViewModels
         public required string Content { get; set; }
 
         [Required(ErrorMessage = "Please select whether this is an Offer or a Demand")]
-        public PostType Type { get; set; }
+        public PostType? Type { get; set; }
     }
 }

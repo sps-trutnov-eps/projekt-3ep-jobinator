@@ -40,8 +40,8 @@ namespace Jobinator.Controllers
             {
                 Title = model.Title,
                 Content = model.Content,
-                Category = model.Category,
-                Type = model.Type,
+                Category = model.Category!.Value,
+                Type = model.Type!.Value,
                 UserId = LoggedUser.Id
             };
 
