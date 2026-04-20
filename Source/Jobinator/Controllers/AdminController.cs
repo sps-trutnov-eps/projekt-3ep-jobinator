@@ -34,8 +34,13 @@ namespace Jobinator.Controllers
             string? AdminUsername = _config["AdminCredentials:Username"];
             string? AdminPassword = _config["AdminCredentials:Password"];
 
-            // Porovnání zadaných údajů s konfigurací
-            if (username == AdminUsername && password == AdminPassword)
+            // Kontrola: Údaje v konfiguraci nesmí být prázdné a musí odpovídat vstupu
+            if (!string.IsNullOrEmpty(AdminUsername) && 
+                !string.IsNullOrEmpty(AdminPassword) && 
+                !string.IsNullOrEmpty(username) &&
+                !string.IsNullOrEmpty(password) &&
+                username == AdminUsername && 
+                password == AdminPassword)
             {
                 Debug.WriteLine("Admin Login successful");
                 // Vymazání session pro případ, že byl uživatel přihlášen jako běžný uživatel

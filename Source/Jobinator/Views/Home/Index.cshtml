@@ -43,7 +43,16 @@
                             <p class="card-text">@post.Content</p>
                             <p><strong>Type:</strong> @post.Type.ToString()</p>
                             <p><strong>Category:</strong> @post.Category.ToString()</p>
-                            <p><strong>Posted by:</strong> <a href="/User/UserProfile?username=@post.User.Username">@post.User.Username</a></p>
+                            <p><strong>Posted by:</strong> 
+                                @if (post.User != null)
+                                {
+                                    <a href="/User/UserProfile?username=@post.User.Username">@post.User.Username</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted italic">Unknown user</span>
+                                }
+                            </p>
                         </div>
                     </div>
                 </div>
