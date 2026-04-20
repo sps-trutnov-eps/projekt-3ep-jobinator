@@ -29,8 +29,10 @@ namespace Jobinator.Controllers
             // Validace vstupních dat
             if (!ModelState.IsValid)
             {
-                // Při neúspěšné validaci přesměruje zpět na příslušnou stránku
-                return RedirectToAction(model.Type == Post.PostType.Offer ? "Offer" : "Demand", "Home");
+                // Při neúspěšné validaci zůstane na stejné stránce (Profil) a zobrazí chyby
+                // Je nutné znovu načíst data uživatele, aby se mohl profil správně vykreslit
+                await _Data.Entry(LoggedUser).Collection(u => u.Posts).LoadAsync();
+                return View("~/Views/User/Profile.cshtml", LoggedUser);
             }
 
             // Mapování ViewModelu na databázový model Post
