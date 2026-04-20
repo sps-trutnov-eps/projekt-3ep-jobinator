@@ -104,10 +104,17 @@ namespace Jobinator.Controllers
             {
                 return RedirectToAction("Index");
             }
-            // Vyhledání a smazání uživatele
+            // Vyhledání uživatele
             User? user = await _Data.Users.FindAsync(userId);
             if (user != null)
             {
+                // Odstranění všech lajků spojených s tímto uživatelem (jako odesílatel i příjemce)
+                var associatedLikes = await _Data.Likes
+                    .Where(l => l.LikerId == user.Id || l.LikedUserId == user.Id)
+                    .ToListAsync();
+                
+                _Data.Likes.RemoveRange(associatedLikes);
+
                 _Data.Users.Remove(user);
                 await _Data.SaveChangesAsync();
             }

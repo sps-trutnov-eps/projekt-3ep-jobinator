@@ -131,7 +131,19 @@ namespace Jobinator.Controllers
 
             if (LoggedUser == null) return RedirectToAction("Index", "Home");
 
-            if (!BCrypt.Net.BCrypt.Verify(Password, LoggedUser.PasswordHash)) return View();
+            if (!BCrypt.Net.BCrypt.Verify(Password, LoggedUser.PasswordHash))
+            {
+                ModelState.AddModelError(string.Empty, "Neplatné heslo.");
+                return View();
+            }
+
+            // Odstranění všech lajků spojených s tímto uživatelem (jako odesílatel i příjemce)
+            var associatedLikes = await _Data.Likes
+                .Where(l => l.LikerId == LoggedUser.Id || l.LikedUserId == LoggedUser.Id)
+                .ToListAsync();
+            
+            _Data.Likes.RemoveRange(associatedLikes);
+
             HttpContext.Session.Clear();
 
             _Data.Users.Remove(LoggedUser);
