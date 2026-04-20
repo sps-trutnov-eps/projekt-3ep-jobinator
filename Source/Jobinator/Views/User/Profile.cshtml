@@ -39,35 +39,35 @@
                     <div class="mb-3">
                         <label for="title" class="form-label">Title</label>
                         <input type="text" class="form-control" id="title" name="Title" value="@(ViewData.ModelState["Title"]?.AttemptedValue)" required>
-                        <span class="text-danger">@Html.ValidationMessage("Title")</span>
+                        @Html.ValidationMessage("Title", "", new { @class = "text-danger" })
                     </div>
                     <div class="mb-3">
                         <label for="content" class="form-label">Content</label>
                         <textarea class="form-control" id="content" name="Content" rows="3" required>@(ViewData.ModelState["Content"]?.AttemptedValue)</textarea>
-                        <span class="text-danger">@Html.ValidationMessage("Content")</span>
+                        @Html.ValidationMessage("Content", "", new { @class = "text-danger" })
                     </div>
                     <div class="mb-3">
                         <label for="offerRequest" class="form-label">Select Offer/Request</label>
                         <select class="form-select" id="offerRequest" name="Type" required>
-                            <option selected disabled value="">Choose...</option>
+                            <option selected="@(ViewData.ModelState["Type"] == null ? "selected" : null)" disabled value="">Choose...</option>
                             @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.PostType)))
                             {
                                 <option value="@item" selected="@(ViewData.ModelState["Type"]?.AttemptedValue == item.ToString() ? "selected" : null)">@item</option>
                             }
                         </select>
-                        <span class="text-danger">@Html.ValidationMessage("Type")</span>
+                        @Html.ValidationMessage("Type", "", new { @class = "text-danger" })
                     </div>
 
                     <div class="mb-3">
                         <label for="category" class="form-label">Select Category</label>
                         <select class="form-select" id="category" name="Category" required>
-                            <option selected disabled value="">Choose...</option>
+                            <option selected="@(ViewData.ModelState["Category"] == null ? "selected" : null)" disabled value="">Choose...</option>
                             @foreach (var item in Enum.GetValues(typeof(Jobinator.Models.Post.JobCategory)))
                             {
                                 <option value="@item" selected="@(ViewData.ModelState["Category"]?.AttemptedValue == item.ToString() ? "selected" : null)">@item</option>
                             }
                         </select>
-                        <span class="text-danger">@Html.ValidationMessage("Category")</span>
+                        @Html.ValidationMessage("Category", "", new { @class = "text-danger" })
                     </div>
                 </form>
             </div>

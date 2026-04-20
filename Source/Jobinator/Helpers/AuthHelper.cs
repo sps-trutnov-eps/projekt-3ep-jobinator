@@ -2,7 +2,6 @@ using Jobinator.Data;
 using Jobinator.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace Jobinator.Helpers
 {
