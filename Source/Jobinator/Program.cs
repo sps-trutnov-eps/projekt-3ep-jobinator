@@ -22,6 +22,7 @@ public class Program
         builder.Services.AddHttpContextAccessor();
         
         // Přidání podpory pro Session (používá se pro přihlášení uživatele)
+        builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession();
         
         // Registrace naší vlastní služby pro autentizaci
@@ -30,16 +31,16 @@ public class Program
         var app = builder.Build();
 
         // Konfigurace middleware pipeliny
+        // Povolení statických souborů (CSS, JS, obrázky) ve wwwroot (před routováním pro výkon)
+        app.UseStaticFiles();
+
         app.UseRouting();
+        
+        // Aktivace Session middleware (před mapováním endpointů, aby byla session dostupná v controllerech)
+        app.UseSession();
         
         // Nastavení výchozí routy pro controllery
         app.MapDefaultControllerRoute();
-        
-        // Aktivace Session middleware
-        app.UseSession();
-        
-        // Povolení statických souborů (CSS, JS, obrázky) ve wwwroot
-        app.UseStaticFiles();
 
         // Automatické naplnění databáze testovacími daty při startu v režimu Development
         if (app.Environment.IsDevelopment())
