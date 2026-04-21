@@ -56,30 +56,30 @@ public class Program
         app.Run();
     }
 
-    // Simple function that tests the basics of our database, serves also as an example 
+    // Jednoduchá funkce, která testuje základy naší databáze, slouží také jako příklad 
     private static void TestDB(WebApplication app)
     {
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-            // Add a new user
+            // Přidání nového uživatele
             var user = new User {Username = "username2", Name = "John", Surname = "Doe", PasswordHash = "passwordHash" };
             context.Users.Add(user);
             context.SaveChanges();
 
-            // Add a new post
+            // Přidání nového příspěvku
             var post = new Post {Type = Post.PostType.Offer, Category = Post.JobCategory.IT, Title = "My First Post", Content = "Hello World!", UserId = user.Id };
             context.Posts.Add(post);
             context.SaveChanges();
 
-            // Retrieve and display the post
+            // Načtení a zobrazení příspěvku
             var RetrievedPost = context.Posts.Include(p => p.User).FirstOrDefault(p => p.Id == post.Id);
             Debug.WriteLine($"Post Title: {RetrievedPost.Title}, Author: {RetrievedPost.User.Name}");
             var UserWithPosts = context.Users
                                .Include(u => u.Posts)
                                .FirstOrDefault(u => u.Id == RetrievedPost.User.Id);
-            //Print out list of all posts
+            // Výpis seznamu všech příspěvků
             foreach (var UserPost in UserWithPosts.Posts)
             {
                 Debug.WriteLine($"Post: {post.Title}");

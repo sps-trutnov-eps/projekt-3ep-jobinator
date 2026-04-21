@@ -8,21 +8,21 @@ namespace Jobinator.Data
     {
         public static async Task SeedAsync(DataContext context)
         {
-            // Seed Users if empty
+            // Naplnění uživatelů, pokud je tabulka prázdná
             if (!await context.Users.AnyAsync())
             {
                 var userFaker = new Faker<User>()
                     .RuleFor(u => u.Username, f => f.Internet.UserName())
                     .RuleFor(u => u.Name, f => f.Name.FirstName())
                     .RuleFor(u => u.Surname, f => f.Name.LastName())
-                    .RuleFor(u => u.PasswordHash, f => BCrypt.Net.BCrypt.HashPassword("Password123")); // Known password for dev ease
+                    .RuleFor(u => u.PasswordHash, f => BCrypt.Net.BCrypt.HashPassword("Password123")); // Známé heslo pro usnadnění vývoje
 
                 var users = userFaker.Generate(10);
                 context.Users.AddRange(users);
                 await context.SaveChangesAsync();
             }
 
-            // Seed Posts if empty
+            // Naplnění příspěvků, pokud je tabulka prázdná
             if (!await context.Posts.AnyAsync())
             {
                 var userIds = await context.Users.Select(u => u.Id).ToListAsync();
