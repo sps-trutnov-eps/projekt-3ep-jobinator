@@ -21,35 +21,36 @@ Jobinator je webová aplikace typu job board (pracovní portál) vyvinutá v pro
 
 ## 📦 Instalace a spuštění
 
-Zprovoznění projektu na vašem počítači je jednoduché. Budete k tomu potřebovat nainstalované rozhraní [.NET 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) a SQL Server (např. LocalDB, který je součástí Visual Studia).
+Pro lokální spuštění projektu je vyžadováno rozhraní [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) a SQL Server (např. LocalDB, který je součástí Visual Studia).
 
-1.  **Stažení projektu**:
-    Nejprve si stáhněte projekt do svého lokálního adresáře:
-    ```bash
-    git clone https://github.com/vas-nick/jobinator.git
-    cd jobinator/Source/Jobinator
-    ```
+1. **Klonování repozitáře**
+   ```bash
+   git clone https://github.com/vas-nick/jobinator.git
+   cd projekt-3ep-jobinator
+   ```
 
-2. **Konfigurace databáze**:
-    Ujistěte se, že v souboru appsettings.json je správně definován ConnectionStrings. Pokud využíváte Visual Studio a LocalDB, výchozí nastavení by mělo být funkční.
+2. **Konfigurace databáze**
+   Projekt je přednastaven pro použití **SQL Server LocalDB**. Pokud vaše prostředí vyžaduje jinou konfiguraci, upravte `ConnectionStrings` v souboru:
+   `Source/Jobinator/appsettings.json`
 
-3.  **Příprava databáze**:
-    Pomocí nástroje EF Core vytvořte databázové schéma a naplňte jej úvodními daty:
-    ```bash
-    dotnet ef database update
-    ```
+3. **Inicializace databáze**
+   Pro vytvoření databázového schématu pomocí Entity Framework Migrations spusťte v adresáři `Source/Jobinator`:
+   ```bash
+   dotnet ef database update
+   ```
 
-4.  **Spuštění aplikace**:
-    Projekt spustíte standardním příkazem pro .NET CLI:
-    ```bash
-    dotnet run
-    ```
-    Aplikace bude následně dostupná na adrese http://localhost:5000 (případně na portu specifikovaném ve vašem výstupu konzole).
+4. **Spuštění aplikace**
+   Aplikaci spustíte příkazem:
+   ```bash
+   dotnet run --project Source/Jobinator/Jobinator.csproj
+   ```
+   Po spuštění bude portál dostupný na adrese `http://localhost:5000` (nebo dle výpisu v konzoli).
 
-### 💡 Tipy pro prohlížení
-- **Testovací data**: Při prvním spuštění se web automaticky naplní vzorovými inzeráty a uživateli, takže uvidíte funkční obsah bez nutnosti cokoliv vyplňovat.
-- **Administrace**: Do správy webu (dashboardu) se dostanete přes adresu `/Admin`. Výchozí údaje pro vstup jsou: jméno `admin` a heslo `admin`.
-- **Přihlášení za uživatele**: Všichni automaticky vytvoření uživatelé mají pro snadné testování nastavené stejné heslo: `Password123`.
+### 💡 Užitečné informace
+- **Testovací data**: Při prvním spuštění v režimu *Development* aplikace automaticky vygeneruje testovací uživatele a inzeráty pomocí knihovny Bogus.
+- **Administrátorský přístup**: Pro přístup do správy systému využijte výchozí údaje (viz `appsettings.json`):
+  - **Uživatel**: `admin`
+  - **Heslo**: `admin`
 
 ## 👥 Autoři
 
