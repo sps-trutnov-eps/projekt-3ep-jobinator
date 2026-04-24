@@ -25,7 +25,7 @@ Pro lokální spuštění projektu je vyžadováno rozhraní [.NET 8.0 SDK](http
 
 1. **Klonování repozitáře**
    ```bash
-   git clone https://github.com/vas-nick/jobinator.git
+   git clone https://github.com/sps-trutnov-eps/projekt-3ep-jobinator.git
    cd projekt-3ep-jobinator
    ```
 
